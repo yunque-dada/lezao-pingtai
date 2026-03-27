@@ -13,7 +13,8 @@ fi
 
 echo "Using BACKEND_URL: $BACKEND_URL"
 
-cat > /etc/nginx/conf.d/default.conf << EOF
+# Generate nginx config
+cat > /etc/nginx/conf.d/default.conf << 'NGINX_EOF'
 server {
     listen 80;
     server_name localhost;
@@ -21,28 +22,31 @@ server {
     location / {
         root /usr/share/nginx/html;
         index index.html index.htm;
-        try_files \$uri \$uri/ /index.html;
+        try_files $uri $uri/ /index.html;
     }
 
     location /api {
-        proxy_pass $BACKEND_URL/api;
+        proxy_pass BACKEND_URL_PLACEHOLDER/api;
         proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \$host;
-        proxy_cache_bypass \$http_upgrade;
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
     }
 
     location /scratch3-master {
-        proxy_pass $BACKEND_URL/scratch3-master;
+        proxy_pass BACKEND_URL_PLACEHOLDER/scratch3-master;
         proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \$host;
-        proxy_cache_bypass \$http_upgrade;
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
     }
 }
-EOF
+NGINX_EOF
+
+# Replace placeholder with actual URL
+sed -i "s|BACKEND_URL_PLACEHOLDER|$BACKEND_URL|g" /etc/nginx/conf.d/default.conf
 
 cat /etc/nginx/conf.d/default.conf
 nginx -g "daemon off;"
