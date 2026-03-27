@@ -9,10 +9,8 @@ COPY . .
 RUN ls -la
 # 检查是否存在src目录
 RUN ls -la src/ || echo "src目录不存在"
-# 检查是否存在tsconfig.json文件
-RUN if [ -f tsconfig.json ]; then echo "tsconfig.json存在"; else echo "tsconfig.json不存在，创建默认配置"; fi
-# 如果tsconfig.json不存在，创建一个默认的配置文件
-RUN if [ ! -f tsconfig.json ]; then cat > tsconfig.json << 'EOF'
+# 检查是否存在tsconfig.json文件，如果不存在则创建
+RUN if [ -f tsconfig.json ]; then echo "tsconfig.json存在"; else echo "tsconfig.json不存在，创建默认配置"; cat > tsconfig.json << 'EOF'
 {
   "compilerOptions": {
     "target": "ES2020",
@@ -39,15 +37,15 @@ fi
 # 显示tsconfig.json文件内容
 RUN cat tsconfig.json
 # 创建环境变量文件
-RUN echo "NODE_ENV=production" > .env
-RUN echo "PORT=5000" >> .env
-RUN echo "MONGODB_URI=mongodb://localhost:27017/scratch-platform" >> .env
-RUN echo "JWT_SECRET=your-secret-key" >> .env
-RUN echo "JWT_EXPIRE=7d" >> .env
-RUN echo "REDIS_HOST=localhost" >> .env
-RUN echo "REDIS_PORT=6379" >> .env
-RUN echo "CLIENT_URL=http://localhost:3000" >> .env
-RUN echo "CORS_ORIGIN=http://localhost:3000,http://localhost:3001,http://localhost:5000" >> .env
+RUN echo "NODE_ENV=production" > .env && \
+    echo "PORT=5000" >> .env && \
+    echo "MONGODB_URI=mongodb://localhost:27017/scratch-platform" >> .env && \
+    echo "JWT_SECRET=your-secret-key" >> .env && \
+    echo "JWT_EXPIRE=7d" >> .env && \
+    echo "REDIS_HOST=localhost" >> .env && \
+    echo "REDIS_PORT=6379" >> .env && \
+    echo "CLIENT_URL=http://localhost:3000" >> .env && \
+    echo "CORS_ORIGIN=http://localhost:3000,http://localhost:3001,http://localhost:5000" >> .env
 # 打印TypeScript版本
 RUN npx tsc --version
 # 执行TypeScript编译
