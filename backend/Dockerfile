@@ -2,12 +2,21 @@ FROM node:18
 WORKDIR /app
 # 检查当前工作目录
 RUN pwd
+# 列出构建上下文中的文件
+RUN ls -la /
 # 复制package.json和package-lock.json
 COPY package*.json ./
+RUN ls -la
 RUN npm install
 # 复制所有文件
 COPY . .
 # 详细列出当前目录内容，检查tsconfig.json是否存在
+RUN ls -la
+# 检查是否存在src目录
+RUN ls -la src/ || echo "src目录不存在"
+# 从项目根目录复制tsconfig.json文件
+COPY tsconfig.json ./
+# 再次检查tsconfig.json是否存在
 RUN ls -la
 # 检查tsconfig.json文件内容
 RUN cat tsconfig.json
