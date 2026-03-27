@@ -10,16 +10,17 @@ RUN npm install
 # 复制所有文件
 COPY . .
 
-# 构建项目（捕获错误）
-RUN npm run build 2>&1 || (echo "Build failed!" && exit 1)
+# 清除之前的构建缓存
+RUN rm -rf build/
+
+# 构建项目
+RUN npm run build
 
 # 详细检查构建输出
 RUN echo "=== Checking build directory ===" && \
     ls -la build/ && \
     echo "=== Checking for index.html ===" && \
-    ls -la build/index.html && \
-    echo "=== Checking static directory ===" && \
-    ls -la build/static/
+    cat build/index.html | head -20
 
 FROM nginx:alpine
 
@@ -28,7 +29,9 @@ COPY --from=build /app/build /usr/share/nginx/html
 
 # 检查复制后的文件
 RUN echo "=== Files in nginx html directory ===" && \
-    ls -la /usr/share/nginx/html
+    ls -la /usr/share/nginx/html && \
+    echo "=== Content of index.html ===" && \
+    cat /usr/share/nginx/html/index.html | head -20
 
 # 创建默认nginx配置
 RUN echo 'server {' > /etc/nginx/conf.d/default.conf && \
@@ -41,10 +44,6 @@ RUN echo 'server {' > /etc/nginx/conf.d/default.conf && \
     echo '        try_files $uri $uri/ /index.html;' >> /etc/nginx/conf.d/default.conf && \
     echo '    }' >> /etc/nginx/conf.d/default.conf && \
     echo '}' >> /etc/nginx/conf.d/default.conf
-
-# 显示最终配置
-RUN echo "=== Nginx configuration ===" && \
-    cat /etc/nginx/conf.d/default.conf
 
 # 暴露80端口
 EXPOSE 80
