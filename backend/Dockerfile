@@ -1,10 +1,16 @@
 FROM node:18
 WORKDIR /app
+# 检查当前工作目录
+RUN pwd
+# 复制package.json和package-lock.json
 COPY package*.json ./
 RUN npm install
+# 复制所有文件
 COPY . .
-# 列出当前目录内容，检查文件是否正确复制
+# 详细列出当前目录内容，检查tsconfig.json是否存在
 RUN ls -la
+# 检查tsconfig.json文件内容
+RUN cat tsconfig.json
 # 创建环境变量文件
 RUN echo "NODE_ENV=production" > .env
 RUN echo "PORT=5000" >> .env
@@ -17,7 +23,7 @@ RUN echo "CLIENT_URL=http://localhost:3000" >> .env
 RUN echo "CORS_ORIGIN=http://localhost:3000,http://localhost:3001,http://localhost:5000" >> .env
 # 打印TypeScript版本
 RUN npx tsc --version
-# 执行构建
-RUN npm run build
+# 手动指定tsconfig.json路径执行构建
+RUN npx tsc --project tsconfig.json
 EXPOSE 5000
 CMD ["npm", "start"]
