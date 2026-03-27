@@ -4,8 +4,8 @@ WORKDIR /app
 # 复制backend目录的package.json和package-lock.json
 COPY backend/package*.json ./
 
-# 安装依赖
-RUN npm install
+# 安装依赖（使用--legacy-peer-deps解决依赖冲突）
+RUN npm install --legacy-peer-deps
 
 # 复制backend目录的所有源代码
 COPY backend/ ./
