@@ -1,14 +1,14 @@
 FROM node:18
 WORKDIR /app
 
-# 复制package.json和package-lock.json
-COPY package*.json ./
+# 复制backend目录的package.json和package-lock.json
+COPY backend/package*.json ./
 
 # 安装依赖
 RUN npm install
 
-# 复制所有源代码
-COPY . .
+# 复制backend目录的所有源代码
+COPY backend/ ./
 
 # 检查文件结构
 RUN ls -la && ls -la src/
