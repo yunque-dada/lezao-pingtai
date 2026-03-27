@@ -1,22 +1,23 @@
 FROM node:18
 WORKDIR /app
+
 # 复制package.json和package-lock.json
 COPY package*.json ./
-# 安装依赖，包括TypeScript
+
+# 安装依赖
 RUN npm install
-# 创建server.js文件
-RUN echo 'const http = require("http"); const server = http.createServer((req, res) => { res.statusCode = 200; res.setHeader("Content-Type", "text/plain"); res.end("Hello World!"); }); server.listen(5000, () => { console.log("Server running on port 5000"); });' > server.js
-# 详细列出当前目录内容，检查文件是否正确复制
-RUN ls -la
-# 检查是否存在package.json文件
-RUN ls -la package.json || echo "package.json不存在"
-# 检查server.js文件是否存在
-RUN ls -la server.js
-# 显示server.js文件内容，检查语法是否正确
-RUN cat server.js
-# 修改package.json中的start脚本，指向我们创建的server.js文件
-RUN npm pkg set scripts.start="node server.js"
-# 显示package.json中的scripts部分
-RUN npm pkg get scripts
+
+# 复制所有源代码
+COPY . .
+
+# 编译TypeScript代码
+RUN npm run build
+
+# 检查编译输出
+RUN ls -la dist/
+
+# 暴露5000端口
 EXPOSE 5000
-CMD ["npm", "start"]
+
+# 启动编译后的服务器
+CMD ["node", "dist/server.js"]
