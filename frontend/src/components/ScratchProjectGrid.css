@@ -1,0 +1,441 @@
+.scratch-project-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.scratch-project-header {
+  margin-bottom: 32px;
+}
+
+.scratch-project-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 24px;
+  letter-spacing: -0.5px;
+}
+
+.scratch-project-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-button {
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-button:hover {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.filter-button.active {
+  color: #fff;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.search-box {
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 14px;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.3s ease;
+  background-color: #f8f9fa;
+}
+
+.search-box input:focus {
+  border-color: #667eea;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.button-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.create-project-button {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
+}
+
+.create-project-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(17, 153, 142, 0.4);
+}
+
+.refresh-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.refresh-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.scratch-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 24px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 32px 0 16px 0;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scratch-project-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  cursor: pointer;
+  border: 1px solid #f0f0f0;
+}
+
+.scratch-project-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: #e0e0e0;
+}
+
+.own-project-card {
+  border-left: 4px solid #667eea;
+}
+
+.project-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.project-thumbnail {
+  width: 100%;
+  height: 170px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+  overflow: hidden;
+  position: relative;
+}
+
+.project-thumbnail::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.scratch-project-card:hover .project-thumbnail::before {
+  opacity: 1;
+}
+
+.project-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbnail-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  color: #adb5bd;
+}
+
+.project-info {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  height: 150px;
+  box-sizing: border-box;
+}
+
+.project-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 6px 0;
+  display: block;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+  height: 48px;
+  flex-shrink: 0;
+}
+
+.project-author {
+  font-size: 13px;
+  color: #6c757d;
+  margin: 0 0 4px 0;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.project-role {
+  font-size: 13px;
+  color: #495057;
+  margin: 0 0 4px 0;
+  font-weight: 500;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.project-role:empty {
+  height: 18px;
+  margin: 0 0 4px 0;
+}
+
+.project-stats {
+  display: flex;
+  gap: 16px;
+  flex-wrap: nowrap;
+  margin-top: auto;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.stat {
+  font-size: 12px;
+  color: #868e96;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  padding: 4px 10px;
+  font-size: 11px;
+  color: #667eea;
+  background-color: #f0f3ff;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.like-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.like-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.project-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.delete-button {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+
+.delete-button:hover {
+  transform: scale(1.1);
+  background-color: #fff5f5;
+  color: #dc3545;
+}
+
+.featured-button {
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #495057;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e9ecef;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(8px);
+}
+
+.featured-button:hover {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+.featured-button.active {
+  color: #fff;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(255, 154, 158, 0.3);
+}
+
+.scratch-project-loading,
+.scratch-project-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  color: #868e96;
+}
+
+.scratch-project-loading p,
+.scratch-project-empty p {
+  font-size: 16px;
+  margin: 0;
+  font-weight: 500;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #f1f3f5;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 768px) {
+  .scratch-project-container {
+    padding: 16px;
+  }
+
+  .scratch-project-header h1 {
+    font-size: 24px;
+  }
+
+  .scratch-project-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-box {
+    max-width: 100%;
+  }
+
+  .scratch-projects-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  .project-actions {
+    flex-direction: row;
+  }
+
+  .featured-button {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+
+  .button-group {
+    width: 100%;
+  }
+
+  .create-project-button,
+  .refresh-button {
+    flex: 1;
+  }
+}

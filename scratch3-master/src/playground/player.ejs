@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google" value="notranslate">
+  <link rel="shortcut icon" href="static/favicon.ico">
+  <title><%= htmlWebpackPlugin.options.title %></title>
+  <% if (htmlWebpackPlugin.options.sentryConfig) { %>
+  <!-- Sentry error logging to help with finding bugs -->
+  <script src="https://cdn.ravenjs.com/3.22.1/raven.min.js" crossorigin="anonymous"></script>
+  <script>
+    Raven.config(<%= htmlWebpackPlugin.options.sentryConfig %>).install();
+  </script>
+  <!-- /Sentry -->
+  <% } %>
+  <script>
+    window.scratchConfig = {
+      cloudData:{
+        enable: true,
+        id: 'create', //云变量ID
+        api: window.location.hostname + ":8081/api/websocket/scratch/cloudData" //云变量API地址
+      },
+      projectInfo: {//作品信息
+        authorUsername: "",
+        authorAvatar: './static/avatar.png',
+      },
+      stageArea:{
+        scale: window.innerWidth / 480, //自适应屏幕尺寸
+        width: 480,
+        height: 360,
+        showControl: true, //是否显示舞台区控制按钮
+        fullscreenButton:{ //全屏按钮
+          show: true,
+          handleBeforeSetStageUnFull(){ //退出全屏前的操作
+            return true
+          },
+          handleBeforeSetStageFull(){ //全屏前的操作
+            return true
+          }
+        },
+        startButton:{ //开始按钮
+          show: true,
+          handleBeforeStart(){ //开始前的操作
+            return true
+          }
+        },
+        stopButton:{ // 停止按钮
+          show: true,
+          handleBeforeStop(){ //停止前的操作
+            return true
+          }
+        }
+      },
+      handleVmInitialized: (vm) => {
+        window.vm = vm        
+      },
+      handleProjectLoaded:() => {
+      },
+      handleDefaultProjectLoaded:() => {
+        // let url = ''
+        // window.scratch.loadProject(url, () => {
+        //     window.scratch.setCloudId('666')
+        //     vm.runtime.start()
+        // })
+      },
+      //默认项目地址,不需要修请删除本配置项
+      defaultProjectURL: window.location.protocol+"//"+window.location.host +  "/static/project.sb3",
+    }
+  </script>
+</head>
+
+<body>
+  <div id="scratch">
+    <p>Loading……</p>
+  </div>
+</body>
+<script>
+
+</script>
+
+</html>

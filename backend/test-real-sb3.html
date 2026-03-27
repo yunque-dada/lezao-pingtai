@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>真实SB3文件测试</title>
+</head>
+<body>
+  <h1>真实SB3文件测试</h1>
+  <button id="testBtn">测试真实SB3文件传输</button>
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('testBtn').addEventListener('click', async () => {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '测试中...';
+
+      try {
+        // 使用一个已存在的真实sb3文件进行测试
+        const filename = '1774541760079_4510_ji积极.sb3';
+        
+        resultDiv.innerHTML += '<br>测试文件名: ' + filename;
+
+        // 下载文件
+        const downloadResponse = await fetch(`http://localhost:5000/api/scratch/projects/file/${encodeURIComponent(filename)}`, {
+          headers: {
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || '')
+          }
+        });
+
+        if (!downloadResponse.ok) {
+          resultDiv.innerHTML += '<br>下载失败: ' + downloadResponse.status;
+          return;
+        }
+
+        const arrayBuffer = await downloadResponse.arrayBuffer();
+        resultDiv.innerHTML += '<br>下载的文件大小: ' + arrayBuffer.byteLength;
+
+        // 检查文件头
+        const uint8Array = new Uint8Array(arrayBuffer.slice(0, 10));
+        resultDiv.innerHTML += '<br>文件前10字节: ' + Array.from(uint8Array).join(', ');
+        resultDiv.innerHTML += '<br>是否为ZIP文件: ' + (uint8Array[0] === 80 && uint8Array[1] === 75 && uint8Array[2] === 3 && uint8Array[3] === 4);
+
+        // 尝试解压ZIP文件（使用JSZip库）
+        resultDiv.innerHTML += '<br>尝试解压文件...';
+        
+        // 由于我们没有JSZip库，让我们直接检查文件内容
+        // 读取ZIP文件的中央目录记录
+        const view = new DataView(arrayBuffer);
+        
+        // 检查文件末尾是否有ZIP结束记录
+        const endOfCentralDirSignature = 0x06054b50; // PK\x05\x06
+        let foundEndOfCentralDir = false;
+        
+        // 从文件末尾向前搜索
+        for (let i = arrayBuffer.byteLength - 22; i >= 0; i--) {
+          if (view.getUint32(i, true) === endOfCentralDirSignature) {
+            foundEndOfCentralDir = true;
+            resultDiv.innerHTML += '<br>找到ZIP结束记录，位置: ' + i;
+            
+            // 读取中央目录的偏移量
+            const centralDirOffset = view.getUint32(i + 16, true);
+            resultDiv.innerHTML += '<br>中央目录偏移量: ' + centralDirOffset;
+            
+            // 读取中央目录的大小
+            const centralDirSize = view.getUint32(i + 12, true);
+            resultDiv.innerHTML += '<br>中央目录大小: ' + centralDirSize;
+            
+            break;
+          }
+        }
+        
+        if (!foundEndOfCentralDir) {
+          resultDiv.innerHTML += '<br>错误: 未找到ZIP结束记录，文件可能损坏';
+        } else {
+          resultDiv.innerHTML += '<br>ZIP文件结构完整';
+        }
+
+      } catch (error) {
+        resultDiv.innerHTML += '<br>错误: ' + error.message;
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>

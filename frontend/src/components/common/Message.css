@@ -1,0 +1,67 @@
+.message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+}
+
+.message-content {
+  flex: 1;
+  margin-right: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.message-close {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.message-close:hover {
+  opacity: 1;
+}
+
+.message-success {
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  color: #52c41a;
+}
+
+.message-error {
+  background-color: #fff1f0;
+  border: 1px solid #ffccc7;
+  color: #ff4d4f;
+}
+
+.message-warning {
+  background-color: #fffbe6;
+  border: 1px solid #ffe58f;
+  color: #faad14;
+}
+
+.message-info {
+  background-color: #f0f5ff;
+  border: 1px solid #adc6ff;
+  color: #1890ff;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

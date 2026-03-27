@@ -1,0 +1,10 @@
+export { default as AdminDashboard } from './Dashboard';
+export { default as TeacherManagement } from './TeacherManagement';
+export { default as StudentManagement } from './StudentManagement';
+export { default as CourseManagement } from './CourseManagement';
+export { default as WorkManagement } from './WorkManagement';
+export { default as ScratchSprites } from './ScratchSprites';
+export { default as ScratchBackdrops } from './ScratchBackdrops';
+export { default as ScratchSounds } from './ScratchSounds';
+export { default as UserManagement } from './UserManagement';
+export { default as SystemSettings } from './SystemSettings';

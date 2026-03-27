@@ -1,0 +1,148 @@
+.sidebar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  bottom: 0;
+  width: 250px;
+  background: white;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease;
+  z-index: 900;
+}
+
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px 0;
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-item-wrapper {
+  width: 100%;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #333;
+  border-left: 3px solid transparent;
+  margin: 0 8px;
+  border-radius: 8px;
+}
+
+.menu-item:hover {
+  background: #f5f7fa;
+}
+
+.menu-item.active {
+  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border-left-color: #667eea;
+  color: #667eea;
+}
+
+.menu-item.sub-menu {
+  padding-left: 52px;
+  font-size: 14px;
+}
+
+.menu-icon {
+  font-size: 18px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.menu-label {
+  flex: 1;
+  margin-left: 12px;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-arrow {
+  font-size: 10px;
+  transition: transform 0.2s;
+  color: #999;
+}
+
+.menu-arrow.expanded {
+  transform: rotate(180deg);
+}
+
+.menu-children {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.collapsed .menu-item {
+  justify-content: center;
+  padding: 12px;
+  margin: 0 4px;
+}
+
+.sidebar.collapsed .menu-item.sub-menu {
+  display: none;
+}
+
+.sidebar.collapsed .menu-children {
+  display: none;
+}
+
+.sidebar-footer {
+  padding: 16px;
+  border-top: 1px solid #e8e8e8;
+  text-align: center;
+}
+
+.sidebar-version {
+  font-size: 12px;
+  color: #999;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 2px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #ccc;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
+  }
+
+  .sidebar:not(.collapsed) {
+    transform: translateX(0);
+  }
+
+  .sidebar.collapsed {
+    transform: translateX(-100%);
+  }
+}

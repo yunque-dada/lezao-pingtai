@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>JSZip测试</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+  <h1>JSZip测试</h1>
+  <button id="testBtn">测试JSZip解压</button>
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('testBtn').addEventListener('click', async () => {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '测试中...';
+
+      try {
+        // 下载一个真实的sb3文件
+        const filename = '1774541760079_4510_ji积极.sb3';
+        resultDiv.innerHTML += '<br>下载文件: ' + filename;
+
+        const downloadResponse = await fetch(`http://localhost:5000/api/scratch/projects/file/${encodeURIComponent(filename)}`, {
+          headers: {
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || '')
+          }
+        });
+
+        if (!downloadResponse.ok) {
+          resultDiv.innerHTML += '<br>下载失败: ' + downloadResponse.status;
+          return;
+        }
+
+        const arrayBuffer = await downloadResponse.arrayBuffer();
+        resultDiv.innerHTML += '<br>文件大小: ' + arrayBuffer.byteLength;
+
+        // 检查文件头
+        const uint8Array = new Uint8Array(arrayBuffer.slice(0, 4));
+        const isZip = uint8Array[0] === 80 && uint8Array[1] === 75 && uint8Array[2] === 3 && uint8Array[3] === 4;
+        resultDiv.innerHTML += '<br>是否为ZIP: ' + isZip;
+
+        // 检查文件末尾
+        const lastBytes = new Uint8Array(arrayBuffer.slice(-22));
+        resultDiv.innerHTML += '<br>最后22字节: ' + Array.from(lastBytes).join(', ');
+        
+        // 检查是否为ZIP结束记录
+        const isEndOfCentralDir = lastBytes[0] === 80 && lastBytes[1] === 75 && lastBytes[2] === 5 && lastBytes[3] === 6;
+        resultDiv.innerHTML += '<br>是否有ZIP结束记录: ' + isEndOfCentralDir;
+
+        // 读取中央目录的偏移量（从结束记录的第16字节开始，4字节小端序）
+        const centralDirOffset = new DataView(arrayBuffer.slice(-22)).getUint32(16, true);
+        resultDiv.innerHTML += '<br>中央目录偏移量: ' + centralDirOffset;
+
+        // 检查中央目录的第一个记录
+        if (centralDirOffset < arrayBuffer.byteLength) {
+          const centralDirBytes = new Uint8Array(arrayBuffer.slice(centralDirOffset, centralDirOffset + 4));
+          resultDiv.innerHTML += '<br>中央目录前4字节: ' + Array.from(centralDirBytes).join(', ');
+          const isCentralDir = centralDirBytes[0] === 80 && centralDirBytes[1] === 75 && centralDirBytes[2] === 1 && centralDirBytes[3] === 2;
+          resultDiv.innerHTML += '<br>中央目录是否存在: ' + isCentralDir;
+        } else {
+          resultDiv.innerHTML += '<br>错误: 中央目录偏移量超出文件范围';
+        }
+
+        // 使用JSZip解压
+        resultDiv.innerHTML += '<br>尝试使用JSZip解压...';
+        
+        try {
+          const zip = await JSZip.loadAsync(arrayBuffer);
+          resultDiv.innerHTML += '<br>JSZip解压成功！';
+          
+          // 列出文件
+          const files = Object.keys(zip.files);
+          resultDiv.innerHTML += '<br>文件列表: ' + files.join(', ');
+          
+          // 查找project.json
+          const projectJsonFile = zip.file('project.json');
+          if (projectJsonFile) {
+            resultDiv.innerHTML += '<br>找到project.json！';
+            const projectJson = await projectJsonFile.async('string');
+            resultDiv.innerHTML += '<br>project.json大小: ' + projectJson.length;
+            resultDiv.innerHTML += '<br>project.json前100字符: ' + projectJson.substring(0, 100);
+          } else {
+            resultDiv.innerHTML += '<br>错误: 未找到project.json';
+          }
+        } catch (jszipError) {
+          resultDiv.innerHTML += '<br>JSZip解压失败: ' + jszipError.message;
+          console.error('JSZip错误:', jszipError);
+        }
+
+      } catch (error) {
+        resultDiv.innerHTML += '<br>错误: ' + error.message;
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>

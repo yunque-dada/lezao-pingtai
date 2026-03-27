@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>VM加载测试</title>
+</head>
+<body>
+  <h1>VM加载测试</h1>
+  <button id="testBtn">测试VM加载</button>
+  <div id="result"></div>
+  <div id="scratch" style="width: 100%; height: 600px;"></div>
+
+  <script src="/scratch3-master/lib.min.js"></script>
+  <script src="/scratch3-master/chunks/gui.js"></script>
+  <script>
+    // 初始化Scratch VM
+    window.scratchConfig = {
+      handleVmInitialized: (vm) => {
+        window.vm = vm;
+        console.log('VM初始化完成');
+      },
+      handleProjectLoaded: () => {
+        console.log('项目加载完成');
+      },
+      handleDefaultProjectLoaded: () => {
+        console.log('默认项目加载完成');
+      },
+      defaultProjectURL: '/scratch3-master/static/project.sb3',
+    };
+
+    document.getElementById('testBtn').addEventListener('click', async () => {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '测试中...';
+
+      if (!window.vm) {
+        resultDiv.innerHTML += '<br>VM未初始化';
+        return;
+      }
+
+      try {
+        // 下载一个真实的sb3文件
+        const filename = '1774541760079_4510_ji积极.sb3';
+        resultDiv.innerHTML += '<br>下载文件: ' + filename;
+
+        const downloadResponse = await fetch(`http://localhost:5000/api/scratch/projects/file/${encodeURIComponent(filename)}`, {
+          headers: {
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || '')
+          }
+        });
+
+        if (!downloadResponse.ok) {
+          resultDiv.innerHTML += '<br>下载失败: ' + downloadResponse.status;
+          return;
+        }
+
+        const arrayBuffer = await downloadResponse.arrayBuffer();
+        resultDiv.innerHTML += '<br>文件大小: ' + arrayBuffer.byteLength;
+
+        // 检查文件头
+        const uint8Array = new Uint8Array(arrayBuffer.slice(0, 4));
+        const isZip = uint8Array[0] === 80 && uint8Array[1] === 75 && uint8Array[2] === 3 && uint8Array[3] === 4;
+        resultDiv.innerHTML += '<br>是否为ZIP: ' + isZip;
+
+        // 尝试加载到VM
+        resultDiv.innerHTML += '<br>尝试加载到VM...';
+        
+        try {
+          await window.vm.loadProject(arrayBuffer);
+          resultDiv.innerHTML += '<br>VM加载成功！';
+          resultDiv.innerHTML += '<br>Targets数量: ' + window.vm.runtime.targets.length;
+        } catch (vmError) {
+          resultDiv.innerHTML += '<br>VM加载失败: ' + vmError.message;
+          console.error('VM加载错误:', vmError);
+        }
+
+      } catch (error) {
+        resultDiv.innerHTML += '<br>错误: ' + error.message;
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>

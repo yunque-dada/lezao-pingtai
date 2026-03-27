@@ -1,0 +1,59 @@
+.work-center {
+  padding: 0;
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 8px 0;
+}
+
+.page-subtitle {
+  font-size: 14px;
+  color: #999;
+  margin: 0;
+}
+
+.work-card {
+  overflow: hidden;
+}
+
+.work-preview {
+  height: 160px;
+  background: linear-gradient(135deg, #faad14 0%, #f5222d 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+  margin: -20px -20px 16px -20px;
+}
+
+.work-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.work-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+.work-author {
+  font-size: 13px;
+  color: #999;
+}
+
+.work-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #666;
+}

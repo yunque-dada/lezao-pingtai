@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>修复后的文件测试</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+  <h1>修复后的文件测试</h1>
+  <button id="testBtn">测试修复后的文件</button>
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('testBtn').addEventListener('click', async () => {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '测试中...';
+
+      try {
+        // 下载修复后的文件
+        const filename = '1774541760079_4510_ji积极_fixed.sb3';
+        resultDiv.innerHTML += '<br>下载文件: ' + filename;
+
+        const downloadResponse = await fetch(`http://localhost:5000/api/scratch/projects/file/${encodeURIComponent(filename)}`, {
+          headers: {
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || '')
+          }
+        });
+
+        if (!downloadResponse.ok) {
+          resultDiv.innerHTML += '<br>下载失败: ' + downloadResponse.status;
+          return;
+        }
+
+        const arrayBuffer = await downloadResponse.arrayBuffer();
+        resultDiv.innerHTML += '<br>文件大小: ' + arrayBuffer.byteLength;
+
+        // 检查文件头
+        const uint8Array = new Uint8Array(arrayBuffer.slice(0, 4));
+        const isZip = uint8Array[0] === 80 && uint8Array[1] === 75 && uint8Array[2] === 3 && uint8Array[3] === 4;
+        resultDiv.innerHTML += '<br>是否为ZIP: ' + isZip;
+
+        // 使用JSZip解压
+        resultDiv.innerHTML += '<br>尝试使用JSZip解压...';
+        
+        try {
+          const zip = await JSZip.loadAsync(arrayBuffer);
+          resultDiv.innerHTML += '<br>JSZip解压成功！';
+          
+          // 列出文件
+          const files = Object.keys(zip.files);
+          resultDiv.innerHTML += '<br>文件列表: ' + files.join(', ');
+          
+          // 查找project.json
+          const projectJsonFile = zip.file('project.json');
+          if (projectJsonFile) {
+            resultDiv.innerHTML += '<br>找到project.json！';
+            const projectJson = await projectJsonFile.async('string');
+            resultDiv.innerHTML += '<br>project.json大小: ' + projectJson.length;
+            resultDiv.innerHTML += '<br>project.json前100字符: ' + projectJson.substring(0, 100);
+          } else {
+            resultDiv.innerHTML += '<br>错误: 未找到project.json';
+          }
+        } catch (jszipError) {
+          resultDiv.innerHTML += '<br>JSZip解压失败: ' + jszipError.message;
+          console.error('JSZip错误:', jszipError);
+        }
+
+      } catch (error) {
+        resultDiv.innerHTML += '<br>错误: ' + error.message;
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>

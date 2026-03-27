@@ -1,0 +1,10 @@
+export { default as TeacherDashboard } from './Dashboard';
+export { default as CourseList } from './CourseList';
+export { default as CourseCreate } from './CourseCreate';
+export { default as CourseEdit } from './CourseEdit';
+export { default as CourseStats } from './CourseStats';
+export { default as StudentList } from './StudentList';
+export { default as StudentDetail } from './StudentDetail';
+export { default as WorkList } from './WorkList';
+export { default as WorkDetail } from './WorkDetail';
+export { default as WorkReview } from './WorkReview';

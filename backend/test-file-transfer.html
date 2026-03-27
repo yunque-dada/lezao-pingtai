@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>文件传输测试</title>
+</head>
+<body>
+  <h1>文件传输测试</h1>
+  <button id="testBtn">测试文件传输</button>
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('testBtn').addEventListener('click', async () => {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '测试中...';
+
+      try {
+        // 1. 首先保存一个测试文件
+        const testData = new Uint8Array([80, 75, 3, 4, 10, 0, 0, 0, 8, 0]); // ZIP文件头
+        const base64Data = btoa(String.fromCharCode.apply(null, testData));
+
+        const saveResponse = await fetch('http://localhost:5000/api/scratch/projects/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || '')
+          },
+          body: JSON.stringify({
+            title: '测试文件',
+            projectData: base64Data,
+            isPublic: false,
+            tags: []
+          })
+        });
+
+        const saveResult = await saveResponse.json();
+        resultDiv.innerHTML += '<br>保存结果: ' + JSON.stringify(saveResult);
+
+        if (!saveResult.success) {
+          resultDiv.innerHTML += '<br>保存失败';
+          return;
+        }
+
+        // 2. 然后加载文件列表
+        const listResponse = await fetch('http://localhost:5000/api/scratch/projects/my-files', {
+          headers: {
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || '')
+          }
+        });
+
+        const listResult = await listResponse.json();
+        resultDiv.innerHTML += '<br>文件列表: ' + JSON.stringify(listResult);
+
+        if (!listResult.success || !listResult.data.projects.length) {
+          resultDiv.innerHTML += '<br>没有文件';
+          return;
+        }
+
+        const filename = listResult.data.projects[0].filename;
+        resultDiv.innerHTML += '<br>文件名: ' + filename;
+
+        // 3. 下载文件
+        const downloadResponse = await fetch(`http://localhost:5000/api/scratch/projects/file/${encodeURIComponent(filename)}`, {
+          headers: {
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || '')
+          }
+        });
+
+        const arrayBuffer = await downloadResponse.arrayBuffer();
+        resultDiv.innerHTML += '<br>下载的文件大小: ' + arrayBuffer.byteLength;
+
+        const uint8Array = new Uint8Array(arrayBuffer.slice(0, 10));
+        resultDiv.innerHTML += '<br>文件前10字节: ' + Array.from(uint8Array).join(', ');
+        resultDiv.innerHTML += '<br>是否为ZIP文件: ' + (uint8Array[0] === 80 && uint8Array[1] === 75 && uint8Array[2] === 3 && uint8Array[3] === 4);
+
+      } catch (error) {
+        resultDiv.innerHTML += '<br>错误: ' + error.message;
+      }
+    });
+  </script>
+</body>
+</html>

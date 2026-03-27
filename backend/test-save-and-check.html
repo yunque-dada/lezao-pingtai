@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>保存并检查测试</title>
+</head>
+<body>
+  <h1>保存并检查测试</h1>
+  <button id="testBtn">创建并保存测试文件</button>
+  <div id="result"></div>
+
+  <script>
+    document.getElementById('testBtn').addEventListener('click', async () => {
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = '测试中...';
+
+      try {
+        // 创建一个简单的测试数据（ZIP文件头 + 一些数据）
+        const testData = new Uint8Array([
+          80, 75, 3, 4,  // PK\x03\x04 (ZIP文件头)
+          10, 0,         // 版本
+          0, 0,          // 标志
+          8, 0,          // 压缩方法
+          0, 0, 0, 0,    // 时间
+          0, 0, 0, 0,    // CRC-32
+          10, 0, 0, 0,   // 压缩大小
+          10, 0, 0, 0,   // 未压缩大小
+          11, 0,         // 文件名长度
+          0, 0,          // 额外字段长度
+          // 文件名: test.txt
+          116, 101, 115, 116, 46, 116, 120, 116,
+          // 文件内容: HelloWorld
+          72, 101, 108, 108, 111, 87, 111, 114, 108, 100,
+          // 中央目录
+          80, 75, 1, 2,  // PK\x01\x02 (中央目录)
+          20, 0,         // 版本
+          10, 0,         // 需要版本
+          0, 0,          // 标志
+          8, 0,          // 压缩方法
+          0, 0, 0, 0,    // 时间
+          0, 0, 0, 0,    // CRC-32
+          10, 0, 0, 0,   // 压缩大小
+          10, 0, 0, 0,   // 未压缩大小
+          11, 0,         // 文件名长度
+          0, 0,          // 额外字段长度
+          0, 0,          // 注释长度
+          0, 0,          // 磁盘号
+          0, 0,          // 内部属性
+          0, 0, 0, 0,    // 外部属性
+          0, 0, 0, 0,    // 本地文件头偏移量
+          // 文件名: test.txt
+          116, 101, 115, 116, 46, 116, 120, 116,
+          // 结束记录
+          80, 75, 5, 6,  // PK\x05\x06 (结束记录)
+          0, 0,          // 磁盘号
+          0, 0,          // 中央目录所在磁盘
+          1, 0,          // 中央目录记录数
+          1, 0,          // 中央目录记录总数
+          45, 0, 0, 0,   // 中央目录大小
+          35, 0, 0, 0,   // 中央目录偏移量
+          0, 0           // 注释长度
+        ]);
+
+        resultDiv.innerHTML += '<br>测试数据大小: ' + testData.length;
+
+        // 转换为Base64
+        const base64Data = btoa(String.fromCharCode.apply(null, testData));
+        resultDiv.innerHTML += '<br>Base64数据长度: ' + base64Data.length;
+
+        // 保存到服务器
+        const saveResponse = await fetch('http://localhost:5000/api/scratch/projects/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || '')
+          },
+          body: JSON.stringify({
+            title: '测试ZIP文件',
+            projectData: base64Data,
+            isPublic: false,
+            tags: []
+          })
+        });
+
+        const saveResult = await saveResponse.json();
+        resultDiv.innerHTML += '<br>保存结果: ' + JSON.stringify(saveResult);
+
+        if (!saveResult.success) {
+          resultDiv.innerHTML += '<br>保存失败';
+          return;
+        }
+
+        // 下载并检查文件
+        const filename = saveResult.data.filename;
+        resultDiv.innerHTML += '<br>文件名: ' + filename;
+
+        const downloadResponse = await fetch(`http://localhost:5000/api/scratch/projects/file/${encodeURIComponent(filename)}`, {
+          headers: {
+            'Authorization': 'Bearer ' + (localStorage.getItem('token') || '')
+          }
+        });
+
+        const arrayBuffer = await downloadResponse.arrayBuffer();
+        resultDiv.innerHTML += '<br>下载的文件大小: ' + arrayBuffer.byteLength;
+
+        // 检查文件头
+        const uint8Array = new Uint8Array(arrayBuffer.slice(0, 4));
+        const isZip = uint8Array[0] === 80 && uint8Array[1] === 75 && uint8Array[2] === 3 && uint8Array[3] === 4;
+        resultDiv.innerHTML += '<br>是否为ZIP: ' + isZip;
+
+        // 检查文件末尾
+        const lastBytes = new Uint8Array(arrayBuffer.slice(-22));
+        resultDiv.innerHTML += '<br>最后22字节: ' + Array.from(lastBytes).join(', ');
+
+        // 比较原始数据和下载的数据
+        const downloadData = new Uint8Array(arrayBuffer);
+        let match = true;
+        for (let i = 0; i < Math.min(testData.length, downloadData.length); i++) {
+          if (testData[i] !== downloadData[i]) {
+            resultDiv.innerHTML += `<br>数据不匹配在位置 ${i}: 原始=${testData[i]}, 下载=${downloadData[i]}`;
+            match = false;
+            break;
+          }
+        }
+        if (match) {
+          resultDiv.innerHTML += '<br>数据完全匹配！';
+        }
+
+      } catch (error) {
+        resultDiv.innerHTML += '<br>错误: ' + error.message;
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>
