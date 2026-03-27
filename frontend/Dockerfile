@@ -18,11 +18,13 @@ FROM nginx:alpine
 # 复制构建产物到nginx的静态文件目录
 COPY --from=build /app/build /usr/share/nginx/html
 
-# 直接创建nginx配置文件，不使用脚本
+# 直接创建nginx配置文件，添加错误日志和超时设置
 RUN printf '%s\n' \
     'server {' \
     '    listen 80;' \
     '    server_name localhost;' \
+    '' \
+    '    error_log /var/log/nginx/error.log debug;' \
     '' \
     '    location / {' \
     '        root /usr/share/nginx/html;' \
@@ -37,6 +39,10 @@ RUN printf '%s\n' \
     '        proxy_set_header Connection '"'"'upgrade'"'"';' \
     '        proxy_set_header Host $host;' \
     '        proxy_cache_bypass $http_upgrade;' \
+    '        proxy_connect_timeout 60s;' \
+    '        proxy_send_timeout 60s;' \
+    '        proxy_read_timeout 60s;' \
+    '        proxy_ssl_verify off;' \
     '    }' \
     '' \
     '    location /scratch3-master {' \
@@ -46,6 +52,10 @@ RUN printf '%s\n' \
     '        proxy_set_header Connection '"'"'upgrade'"'"';' \
     '        proxy_set_header Host $host;' \
     '        proxy_cache_bypass $http_upgrade;' \
+    '        proxy_connect_timeout 60s;' \
+    '        proxy_send_timeout 60s;' \
+    '        proxy_read_timeout 60s;' \
+    '        proxy_ssl_verify off;' \
     '    }' \
     '}' \
     > /etc/nginx/conf.d/default.conf
