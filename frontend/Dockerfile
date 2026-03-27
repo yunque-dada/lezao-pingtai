@@ -29,11 +29,18 @@ COPY --from=build /app/build /usr/share/nginx/html
 
 # 检查复制后的文件
 RUN echo "=== Files in nginx html directory ===" && \
-    ls -la /usr/share/nginx/html && \
-    echo "=== Content of index.html ===" && \
-    cat /usr/share/nginx/html/index.html | head -20
+    ls -la /usr/share/nginx/html
 
-# 创建默认nginx配置
+# 创建启动脚本，使用Railway的PORT环境变量
+RUN echo '#!/bin/sh' > /docker-entrypoint.sh && \
+    echo 'PORT=${PORT:-80}' >> /docker-entrypoint.sh && \
+    echo 'echo "Using PORT: $PORT"' >> /docker-entrypoint.sh && \
+    echo 'sed -i "s/listen 80;/listen $PORT;/g" /etc/nginx/conf.d/default.conf' >> /docker-entrypoint.sh && \
+    echo 'cat /etc/nginx/conf.d/default.conf' >> /docker-entrypoint.sh && \
+    echo 'nginx -g "daemon off;"' >> /docker-entrypoint.sh && \
+    chmod +x /docker-entrypoint.sh
+
+# 创建默认nginx配置（使用80端口，会被脚本替换）
 RUN echo 'server {' > /etc/nginx/conf.d/default.conf && \
     echo '    listen 80;' >> /etc/nginx/conf.d/default.conf && \
     echo '    server_name localhost;' >> /etc/nginx/conf.d/default.conf && \
@@ -45,8 +52,8 @@ RUN echo 'server {' > /etc/nginx/conf.d/default.conf && \
     echo '    }' >> /etc/nginx/conf.d/default.conf && \
     echo '}' >> /etc/nginx/conf.d/default.conf
 
-# 暴露80端口
+# 暴露端口（Railway会动态分配）
 EXPOSE 80
 
 # 启动nginx
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/docker-entrypoint.sh"]
