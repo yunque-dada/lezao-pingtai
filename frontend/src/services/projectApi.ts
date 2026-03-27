@@ -1,12 +1,5 @@
-import apiService from './api';
-import { Project, ProjectFilter, ProjectFormData, ReviewData, PaginationInfo } from '../types/project';
-
-interface ApiResponse<T = any> {
-  success: boolean;
-  message: string;
-  data?: T;
-  pagination?: PaginationInfo;
-}
+import apiService, { ApiResponse } from './api';
+import { Project, ProjectFilter, ProjectFormData, ReviewData } from '../types/project';
 
 export const projectApi = {
   async getProjects(params?: ProjectFilter & { page?: number; limit?: number }): Promise<ApiResponse<{ projects: Project[] }>> {

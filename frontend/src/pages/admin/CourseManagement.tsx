@@ -26,7 +26,7 @@ const CourseManagement: React.FC = () => {
     try {
       setLoading(true);
       const response = await courseApi.getCourses();
-      if (response.success) {
+      if (response.success && response.data) {
         setCourses(response.data.data || []);
       }
     } catch (error: any) {

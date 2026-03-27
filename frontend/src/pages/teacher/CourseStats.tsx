@@ -16,7 +16,7 @@ const CourseStatsPage: React.FC = () => {
 
       try {
         const response = await courseApi.getCourseStats(id);
-        if (response.success) {
+        if (response.success && response.data) {
           setStats(response.data);
         }
       } catch (error) {

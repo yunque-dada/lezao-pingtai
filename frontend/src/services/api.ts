@@ -1,13 +1,14 @@
 // 确保API_BASE_URL是正确的相对路径
 let API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
 
-interface ApiResponse<T = any> {
+export interface ApiResponse<T = any> {
   success: boolean;
   message: string;
   data?: T;
   pagination?: {
     page: number;
     limit: number;
+    total: number;
     pages: number;
   };
 }

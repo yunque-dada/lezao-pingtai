@@ -39,7 +39,7 @@ const CourseEdit: React.FC = () => {
 
       try {
         const response = await courseApi.getCourseById(id);
-        if (response.success) {
+        if (response.success && response.data) {
           setCourse(response.data);
           setFormData({
             title: response.data.title,
