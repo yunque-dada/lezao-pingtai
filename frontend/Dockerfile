@@ -15,15 +15,24 @@ RUN npm run build
 
 FROM nginx:alpine
 
-# 安装dos2unix用于转换换行符
-RUN apk add --no-cache dos2unix
-
 # 复制构建产物到nginx的静态文件目录
 COPY --from=build /app/build /usr/share/nginx/html
 
-# 复制启动脚本并转换换行符
-COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN dos2unix /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
+# 复制nginx配置模板
+COPY nginx.conf /etc/nginx/conf.d/default.conf.template
+
+# 创建启动脚本
+RUN echo '#!/bin/sh' > /docker-entrypoint.sh && \
+    echo 'BACKEND_URL=${BACKEND_URL:-http://localhost:5000}' >> /docker-entrypoint.sh && \
+    echo 'if ! echo "$BACKEND_URL" | grep -qE "^https?://"; then' >> /docker-entrypoint.sh && \
+    echo '  BACKEND_URL="https://$BACKEND_URL"' >> /docker-entrypoint.sh && \
+    echo 'fi' >> /docker-entrypoint.sh && \
+    echo 'echo "Using BACKEND_URL: $BACKEND_URL"' >> /docker-entrypoint.sh && \
+    echo 'sed -i "s|BACKEND_URL_PLACEHOLDER|$BACKEND_URL|g" /etc/nginx/conf.d/default.conf.template' >> /docker-entrypoint.sh && \
+    echo 'cp /etc/nginx/conf.d/default.conf.template /etc/nginx/conf.d/default.conf' >> /docker-entrypoint.sh && \
+    echo 'cat /etc/nginx/conf.d/default.conf' >> /docker-entrypoint.sh && \
+    echo 'nginx -g "daemon off;"' >> /docker-entrypoint.sh && \
+    chmod +x /docker-entrypoint.sh
 
 # 暴露80端口
 EXPOSE 80
