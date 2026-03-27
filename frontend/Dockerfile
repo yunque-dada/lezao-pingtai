@@ -15,12 +15,15 @@ RUN npm run build
 
 FROM nginx:alpine
 
+# 安装dos2unix用于转换换行符
+RUN apk add --no-cache dos2unix
+
 # 复制构建产物到nginx的静态文件目录
 COPY --from=build /app/build /usr/share/nginx/html
 
-# 复制启动脚本
+# 复制启动脚本并转换换行符
 COPY docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+RUN dos2unix /docker-entrypoint.sh && chmod +x /docker-entrypoint.sh
 
 # 暴露80端口
 EXPOSE 80
