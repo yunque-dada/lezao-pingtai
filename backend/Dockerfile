@@ -12,5 +12,9 @@ RUN npm install
 RUN echo 'const http = require("http");\nconst server = http.createServer((req, res) => {\n  res.statusCode = 200;\n  res.setHeader("Content-Type", "text/plain");\n  res.end("Hello World!\n");\n});\nserver.listen(5000, () => {\n  console.log("Server running on port 5000");\n});' > server.js
 # 检查server.js文件是否存在
 RUN ls -la server.js
+# 修改package.json中的start脚本，指向我们创建的server.js文件
+RUN npm pkg set scripts.start="node server.js"
+# 显示package.json中的scripts部分
+RUN npm pkg get scripts
 EXPOSE 5000
-CMD ["node", "server.js"]
+CMD ["npm", "start"]
