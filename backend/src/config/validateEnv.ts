@@ -1,17 +1,39 @@
-const requiredEnvVars = [
-  'NODE_ENV',
-  'PORT',
-  'MONGODB_URI',
-  'JWT_SECRET',
-  'JWT_EXPIRE',
-  'REDIS_HOST',
-  'REDIS_PORT',
-];
+// 设置环境变量默认值
+const setDefaultEnvVars = (): void => {
+  if (!process.env.NODE_ENV) {
+    process.env.NODE_ENV = 'production';
+  }
+  
+  if (!process.env.PORT) {
+    process.env.PORT = '5000';
+  }
+  
+  if (!process.env.JWT_SECRET) {
+    process.env.JWT_SECRET = 'railway-default-secret-key-change-in-production';
+  }
+  
+  if (!process.env.JWT_EXPIRE) {
+    process.env.JWT_EXPIRE = '7d';
+  }
+  
+  if (!process.env.REDIS_HOST) {
+    process.env.REDIS_HOST = 'localhost';
+  }
+  
+  if (!process.env.REDIS_PORT) {
+    process.env.REDIS_PORT = '6379';
+  }
+};
 
 const validateEnv = (): void => {
+  // 设置默认值
+  setDefaultEnvVars();
+  
+  // 只检查最关键的环境变量
+  const criticalEnvVars = ['MONGODB_URI'];
   const missingVars: string[] = [];
 
-  requiredEnvVars.forEach((varName) => {
+  criticalEnvVars.forEach((varName) => {
     if (!process.env[varName]) {
       missingVars.push(varName);
     }
