@@ -25,13 +25,9 @@ const ScratchProjectList: React.FC = () => {
   const fetchProjects = useCallback(async () => {
     try {
       setLoading(true);
-      // 从文件系统获取所有学生的项目列表
       const response = await scratchApi.getAllFileProjects();
-      console.log('从后端收到的作品列表:', response.projects);
       
-      // 类型转换
       const fileProjects = (response.projects || []).map((project: any) => {
-        console.log('处理项目:', project.title, 'isOwn:', project.isOwn, 'clientMark:', project.clientMark);
         return {
           _id: project._id || project.filename,
           title: project.title,
@@ -45,7 +41,6 @@ const ScratchProjectList: React.FC = () => {
           clientMark: project.clientMark,
         };
       });
-      console.log('转换后的作品列表:', fileProjects);
       setProjects(fileProjects);
     } catch (error) {
       console.error('Failed to fetch projects:', error);
@@ -63,14 +58,12 @@ const ScratchProjectList: React.FC = () => {
   };
 
   const handleOpenProject = (project: FileProject) => {
-    // 打开项目，使用文件名作为标识，同时传递userId以便老师能正确加载学生作品
     const token = localStorage.getItem('token');
     const userId = project.userId || project.author;
     const editorUrl = new URL('http://localhost:5000/scratch3-master/index.html');
     editorUrl.searchParams.set('filename', project.filename);
     editorUrl.searchParams.set('userId', userId);
     editorUrl.searchParams.set('token', token || '');
-    // 注入自定义角色库API配置
     editorUrl.searchParams.set('spriteApi', 'http://localhost:5000/api/scratch/resources/sprites/json');
     editorUrl.searchParams.set('backdropApi', 'http://localhost:5000/api/scratch/resources/backdrops/json');
     editorUrl.searchParams.set('soundApi', 'http://localhost:5000/api/scratch/resources/sounds/json');
@@ -109,27 +102,36 @@ const ScratchProjectList: React.FC = () => {
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
 
+  // 获取身份标签
+  const getIdentityTag = (clientMark?: number) => {
+    switch (clientMark) {
+      case 1:
+        return { class: 'teacher', text: '老师端', icon: '👨‍🏫' };
+      case 2:
+        return { class: 'student', text: '学生端', icon: '🎓' };
+      case 3:
+        return { class: 'admin', text: '管理端', icon: '👑' };
+      default:
+        return { class: 'unknown', text: '未知', icon: '❓' };
+    }
+  };
+
   // 过滤项目并分组
   const filteredProjects = projects.filter(project =>
     project.title.toLowerCase().includes(search.toLowerCase())
   );
   
-  // 根据 clientMark 来分组，确保完全按照文件名标记识别
   const ownProjects = filteredProjects.filter(project => {
-    // 如果有 clientMark，优先使用 clientMark 判断
     if (project.clientMark) {
-      return project.clientMark === 1 || project.clientMark === 3; // 1=老师, 3=管理员
+      return project.clientMark === 1 || project.clientMark === 3;
     }
-    // 没有 clientMark，使用 isOwn 判断
     return project.isOwn;
   });
   
   const studentProjects = filteredProjects.filter(project => {
-    // 如果有 clientMark，优先使用 clientMark 判断
     if (project.clientMark) {
-      return project.clientMark === 2; // 2=学生
+      return project.clientMark === 2;
     }
-    // 没有 clientMark，使用 isOwn 判断
     return !project.isOwn;
   });
 
@@ -148,17 +150,11 @@ const ScratchProjectList: React.FC = () => {
         <h1>Scratch作品管理</h1>
         <div className="scratch-project-controls">
           <div className="button-group">
-            <button
-              className="create-project-button"
-              onClick={handleCreateProject}
-            >
-              新建作品
+            <button className="create-project-button" onClick={handleCreateProject}>
+              <span>+</span> 新建作品
             </button>
-            <button
-              className="refresh-button"
-              onClick={fetchProjects}
-            >
-              🔄 刷新
+            <button className="refresh-button" onClick={fetchProjects}>
+              <span>🔄</span> 刷新
             </button>
           </div>
           <div className="search-box">
@@ -172,44 +168,71 @@ const ScratchProjectList: React.FC = () => {
         </div>
       </div>
 
+      {/* 统计信息 */}
+      <div className="stats-bar">
+        <div className="stat-item">
+          <span className="stat-number">{ownProjects.length}</span>
+          <span>我的作品</span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-number">{studentProjects.length}</span>
+          <span>学生作品</span>
+        </div>
+        <div className="stat-item">
+          <span className="stat-number">{filteredProjects.length}</span>
+          <span>总计</span>
+        </div>
+      </div>
+
       {/* 我的作品区域 */}
       {ownProjects.length > 0 && (
         <>
-          <h2 className="section-title">👨‍🏫 我的作品</h2>
+          <h2 className="section-title">
+            👨‍🏫 我的作品
+            <span className="count-badge">{ownProjects.length}</span>
+          </h2>
           <div className="scratch-projects-grid">
-            {ownProjects.map((project) => (
-              <div
-                key={project._id}
-                className="scratch-project-card own-project-card"
-                onClick={() => handleOpenProject(project)}
-              >
-                <div className="project-thumbnail">
-                  <div className="thumbnail-placeholder">
-                    <span>👨‍🏫</span>
+            {ownProjects.map((project) => {
+              const identity = getIdentityTag(project.clientMark);
+              return (
+                <div
+                  key={project._id}
+                  className="scratch-project-card own-project-card"
+                  onClick={() => handleOpenProject(project)}
+                >
+                  <div className="project-thumbnail">
+                    <span className={`source-badge ${identity.class}`}>
+                      {identity.icon} {identity.text}
+                    </span>
+                    <div className="thumbnail-placeholder">👨‍🏫</div>
+                  </div>
+                  <div className="project-info">
+                    <h3 className="project-title">{project.title}</h3>
+                    <div className="project-meta">
+                      <p className="project-author">作者: {project.authorName}</p>
+                      <div className="identity-tags">
+                        <span className={`identity-tag ${identity.class}`}>
+                          {identity.icon} {identity.text}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="project-stats">
+                      <span className="stat">📅 {formatDate(project.modifiedTime)}</span>
+                      <span className="stat">📦 {formatSize(project.size)}</span>
+                    </div>
+                  </div>
+                  <div className="project-actions">
+                    <button
+                      className="delete-button"
+                      onClick={(e) => handleDeleteProject(project._id, e)}
+                      title="删除作品"
+                    >
+                      🗑️
+                    </button>
                   </div>
                 </div>
-                <div className="project-info">
-                  <h3 className="project-title">{project.title}</h3>
-                  <p className="project-author">作者: {project.authorName}</p>
-                  <p className="project-role">
-                    身份: {project.isOwn ? '👨‍🏫 老师' : '🎓 学生'}
-                  </p>
-                  <div className="project-stats">
-                    <span className="stat">📅 {formatDate(project.modifiedTime)}</span>
-                    <span className="stat">📦 {formatSize(project.size)}</span>
-                  </div>
-                </div>
-                <div className="project-actions">
-                  <button
-                    className="delete-button"
-                    onClick={(e) => handleDeleteProject(project._id, e)}
-                    title="删除作品"
-                  >
-                    🗑️
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </>
       )}
@@ -217,39 +240,52 @@ const ScratchProjectList: React.FC = () => {
       {/* 学生作品区域 */}
       {studentProjects.length > 0 && (
         <>
-          <h2 className="section-title">🎨 学生作品</h2>
+          <h2 className="section-title">
+            🎨 学生作品
+            <span className="count-badge">{studentProjects.length}</span>
+          </h2>
           <div className="scratch-projects-grid">
-            {studentProjects.map((project) => (
-              <div
-                key={project._id}
-                className="scratch-project-card"
-                onClick={() => handleOpenProject(project)}
-              >
-                <div className="project-thumbnail">
-                  <div className="thumbnail-placeholder">
-                    <span>🎨</span>
+            {studentProjects.map((project) => {
+              const identity = getIdentityTag(project.clientMark);
+              return (
+                <div
+                  key={project._id}
+                  className="scratch-project-card"
+                  onClick={() => handleOpenProject(project)}
+                >
+                  <div className="project-thumbnail">
+                    <span className={`source-badge ${identity.class}`}>
+                      {identity.icon} {identity.text}
+                    </span>
+                    <div className="thumbnail-placeholder">🎨</div>
+                  </div>
+                  <div className="project-info">
+                    <h3 className="project-title">{project.title}</h3>
+                    <div className="project-meta">
+                      <p className="project-author">作者: {project.authorName}</p>
+                      <div className="identity-tags">
+                        <span className={`identity-tag ${identity.class}`}>
+                          {identity.icon} {identity.text}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="project-stats">
+                      <span className="stat">📅 {formatDate(project.modifiedTime)}</span>
+                      <span className="stat">📦 {formatSize(project.size)}</span>
+                    </div>
                   </div>
                 </div>
-                <div className="project-info">
-                  <h3 className="project-title">{project.title}</h3>
-                  <p className="project-author">作者: {project.authorName}</p>
-                  <p className="project-role">
-                    身份: {project.isOwn ? '👨‍🏫 老师' : '🎓 学生'}
-                  </p>
-                  <div className="project-stats">
-                    <span className="stat">📅 {formatDate(project.modifiedTime)}</span>
-                    <span className="stat">📦 {formatSize(project.size)}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </>
       )}
 
       {filteredProjects.length === 0 && (
         <div className="scratch-project-empty">
-          <p>暂无作品</p>
+          <div className="scratch-project-empty-icon">📂</div>
+          <h3>暂无作品</h3>
+          <p>点击"新建作品"按钮创建您的第一个Scratch作品</p>
         </div>
       )}
     </div>
