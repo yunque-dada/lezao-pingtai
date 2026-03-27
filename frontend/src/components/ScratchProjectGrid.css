@@ -1,396 +1,387 @@
+/* LeZao 平台 - 深度优化后的作品管理样式 */
+
+/* 容器 */
 .scratch-project-container {
   padding: 24px;
-  max-width: 1400px;
+  max-width: 1280px;
   margin: 0 auto;
 }
 
+/* 头部 */
 .scratch-project-header {
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
 .scratch-project-header h1 {
-  font-size: 28px;
-  font-weight: 700;
+  font-size: 26px;
+  font-weight: 600;
   color: #1a1a1a;
-  margin-bottom: 24px;
-  letter-spacing: -0.5px;
+  margin-bottom: 20px;
 }
 
+/* 控制栏 */
 .scratch-project-controls {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 24px;
+  gap: 16px;
   flex-wrap: wrap;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 8px;
 }
 
-.filter-buttons {
+/* 按钮组 */
+.button-group {
   display: flex;
-  gap: 8px;
+  gap: 12px;
 }
 
-.filter-button {
-  padding: 8px 20px;
+.create-project-button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
   font-size: 14px;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.create-project-button:hover {
+  background: #43a047;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+}
+
+.refresh-button {
+  background: #fff;
   color: #666;
-  background-color: #f8f9fa;
-  border: 1px solid #e9ecef;
-  border-radius: 20px;
+  border: 1px solid #ddd;
+  padding: 10px 16px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
 }
 
-.filter-button:hover {
-  background-color: #e9ecef;
-  color: #495057;
+.refresh-button:hover {
+  background: #f5f5f5;
+  border-color: #ccc;
 }
 
-.filter-button.active {
-  color: #fff;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: transparent;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-}
-
+/* 搜索框 */
 .search-box {
   flex: 1;
-  max-width: 400px;
+  max-width: 360px;
+  position: relative;
+}
+
+.search-box::before {
+  content: "🔍";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #999;
 }
 
 .search-box input {
   width: 100%;
-  padding: 12px 16px;
+  padding: 10px 12px 10px 36px;
   font-size: 14px;
-  border: 2px solid #e9ecef;
-  border-radius: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
   outline: none;
-  transition: all 0.3s ease;
-  background-color: #f8f9fa;
+  background: #fff;
+  transition: all 0.2s ease;
 }
 
 .search-box input:focus {
-  border-color: #667eea;
-  background-color: #fff;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
 }
 
-.button-group {
+/* 统计信息栏 */
+.stats-bar {
   display: flex;
-  gap: 12px;
+  gap: 24px;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
+}
+
+.stat-item {
+  display: flex;
   align-items: center;
-}
-
-.create-project-button {
-  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 600;
+  gap: 8px;
   font-size: 14px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(17, 153, 142, 0.3);
+  color: #555;
 }
 
-.create-project-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(17, 153, 142, 0.4);
-}
-
-.refresh-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 12px;
-  cursor: pointer;
+.stat-item .stat-number {
+  font-size: 20px;
   font-weight: 600;
-  font-size: 14px;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  color: #4CAF50;
 }
 
-.refresh-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
-}
-
+/* 网格布局 */
 .scratch-projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
 }
 
+/* 分组标题 */
 .section-title {
   font-size: 18px;
   font-weight: 600;
   color: #1a1a1a;
   margin: 32px 0 16px 0;
   padding-bottom: 12px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 2px solid #e8e8e8;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
+.section-title .count-badge {
+  background: #e8f5e9;
+  color: #4CAF50;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* 项目卡片 */
 .scratch-project-card {
   background: #fff;
-  border-radius: 16px;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
   position: relative;
   cursor: pointer;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #e8e8e8;
 }
 
 .scratch-project-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-  border-color: #e0e0e0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
 }
 
+/* 老师作品特殊标识 */
 .own-project-card {
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #4CAF50;
 }
 
-.project-link {
-  text-decoration: none;
-  color: inherit;
-  display: block;
+/* 管理员作品标识 */
+.admin-project-card {
+  border-left: 4px solid #FF9800;
 }
 
+/* 缩略图 */
 .project-thumbnail {
   width: 100%;
   height: 170px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8ecef 100%);
   overflow: hidden;
-  position: relative;
-}
-
-.project-thumbnail::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.scratch-project-card:hover .project-thumbnail::before {
-  opacity: 1;
-}
-
-.project-thumbnail img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.thumbnail-placeholder {
-  width: 100%;
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 56px;
-  color: #adb5bd;
+  position: relative;
 }
 
+/* 来源标记 */
+.source-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  z-index: 1;
+}
+
+.source-badge.teacher {
+  background: #4CAF50;
+}
+
+.source-badge.student {
+  background: #2196F3;
+}
+
+.source-badge.admin {
+  background: #FF9800;
+}
+
+.source-badge.unknown {
+  background: #9e9e9e;
+}
+
+.thumbnail-placeholder {
+  font-size: 56px;
+  color: #c0c0c0;
+}
+
+/* 项目信息 */
 .project-info {
-  padding: 18px;
-  display: flex;
-  flex-direction: column;
-  height: 150px;
-  box-sizing: border-box;
+  padding: 16px;
 }
 
 .project-title {
   font-size: 16px;
   font-weight: 600;
   color: #1a1a1a;
-  margin: 0 0 6px 0;
-  display: block;
+  margin: 0 0 10px 0;
+  line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.5;
-  height: 48px;
-  flex-shrink: 0;
+  min-height: 44px;
+}
+
+.project-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
 }
 
 .project-author {
   font-size: 13px;
-  color: #6c757d;
-  margin: 0 0 4px 0;
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  height: 18px;
-  flex-shrink: 0;
-}
-
-.project-role {
-  font-size: 13px;
-  color: #495057;
-  margin: 0 0 4px 0;
-  font-weight: 500;
-  height: 18px;
-  flex-shrink: 0;
-}
-
-.project-role:empty {
-  height: 18px;
-  margin: 0 0 4px 0;
-}
-
-.project-stats {
-  display: flex;
-  gap: 16px;
-  flex-wrap: nowrap;
-  margin-top: auto;
-  height: 20px;
-  flex-shrink: 0;
-}
-
-.stat {
-  font-size: 12px;
-  color: #868e96;
+  color: #555;
   display: flex;
   align-items: center;
-  gap: 4px;
-  white-space: nowrap;
-}
-
-.project-tags {
-  display: flex;
-  flex-wrap: wrap;
   gap: 6px;
 }
 
-.tag {
-  padding: 4px 10px;
-  font-size: 11px;
-  color: #667eea;
-  background-color: #f0f3ff;
-  border-radius: 8px;
-  font-weight: 500;
+.project-author::before {
+  content: "👤";
+  font-size: 12px;
 }
 
-.like-button {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 40px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.95);
-  border: none;
-  border-radius: 50%;
-  font-size: 18px;
-  cursor: pointer;
+/* 身份标签 */
+.identity-tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.identity-tag {
+  font-size: 11px;
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.identity-tag.teacher {
+  background: #4CAF50;
+}
+
+.identity-tag.student {
+  background: #2196F3;
+}
+
+.identity-tag.admin {
+  background: #FF9800;
+}
+
+.identity-tag.unknown {
+  background: #9e9e9e;
+}
+
+/* 统计信息 */
+.project-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #888;
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.stat {
   display: flex;
   align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  backdrop-filter: blur(8px);
+  gap: 4px;
 }
 
-.like-button:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
+/* 操作按钮 */
 .project-actions {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 10px;
+  right: 10px;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.scratch-project-card:hover .project-actions {
+  opacity: 1;
 }
 
 .delete-button {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   background: rgba(255, 255, 255, 0.95);
   border: none;
-  border-radius: 50%;
-  font-size: 18px;
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  backdrop-filter: blur(8px);
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
 }
 
 .delete-button:hover {
-  transform: scale(1.1);
-  background-color: #fff5f5;
-  color: #dc3545;
+  background: #ffebee;
+  color: #e53935;
+  transform: scale(1.05);
 }
 
-.featured-button {
-  padding: 6px 14px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #495057;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid #e9ecef;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  backdrop-filter: blur(8px);
-}
-
-.featured-button:hover {
-  background-color: #f8f9fa;
-  border-color: #dee2e6;
-}
-
-.featured-button.active {
-  color: #fff;
-  background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-  border-color: transparent;
-  box-shadow: 0 4px 12px rgba(255, 154, 158, 0.3);
-}
-
-.scratch-project-loading,
-.scratch-project-empty {
+/* 加载状态 */
+.scratch-project-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 80px 20px;
-  color: #868e96;
-}
-
-.scratch-project-loading p,
-.scratch-project-empty p {
-  font-size: 16px;
-  margin: 0;
-  font-weight: 500;
+  color: #888;
 }
 
 .loading-spinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid #f1f3f5;
-  border-top: 4px solid #667eea;
+  width: 44px;
+  height: 44px;
+  border: 3px solid #f0f0f0;
+  border-top: 3px solid #4CAF50;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 @keyframes spin {
@@ -398,18 +389,54 @@
   100% { transform: rotate(360deg); }
 }
 
+/* 空状态 */
+.scratch-project-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  color: #888;
+  text-align: center;
+}
+
+.scratch-project-empty-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.scratch-project-empty h3 {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.scratch-project-empty p {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 20px;
+}
+
+/* 响应式 */
 @media (max-width: 768px) {
   .scratch-project-container {
     padding: 16px;
   }
 
   .scratch-project-header h1 {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .scratch-project-controls {
     flex-direction: column;
     align-items: stretch;
+    gap: 12px;
+  }
+
+  .stats-bar {
+    flex-wrap: wrap;
+    gap: 16px;
   }
 
   .search-box {
@@ -421,15 +448,6 @@
     gap: 16px;
   }
 
-  .project-actions {
-    flex-direction: row;
-  }
-
-  .featured-button {
-    font-size: 11px;
-    padding: 4px 10px;
-  }
-
   .button-group {
     width: 100%;
   }
@@ -437,5 +455,26 @@
   .create-project-button,
   .refresh-button {
     flex: 1;
+    justify-content: center;
+  }
+
+  .project-actions {
+    opacity: 1;
+  }
+
+  .source-badge {
+    font-size: 10px;
+    padding: 3px 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .scratch-projects-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stats-bar {
+    flex-direction: column;
+    gap: 8px;
   }
 }
