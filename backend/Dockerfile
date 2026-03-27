@@ -4,12 +4,14 @@ WORKDIR /app
 COPY package*.json ./
 # 安装依赖，包括TypeScript
 RUN npm install
-# 复制所有文件
-COPY . .
+# 复制src目录
+COPY src/ src/
+# 复制scripts目录
+COPY scripts/ scripts/
 # 详细列出当前目录内容，检查文件是否正确复制
 RUN ls -la
 # 直接创建tsconfig.json文件
-RUN echo '{"compilerOptions":{"target":"ES2020","module":"Node16","lib":["ES2020"],"outDir":"./dist","rootDir":".","strict":true,"esModuleInterop":true,"skipLibCheck":true,"forceConsistentCasingInFileNames":true,"resolveJsonModule":true,"moduleResolution":"Node16","emitDecoratorMetadata":true,"experimentalDecorators":true,"sourceMap":true,"isolatedModules":true},"include":["./**/*.ts"],"exclude":["node_modules","dist"]}' > tsconfig.json
+RUN echo '{"compilerOptions":{"target":"ES2020","module":"CommonJS","lib":["ES2020"],"outDir":"./dist","rootDir":".","strict":true,"esModuleInterop":true,"skipLibCheck":true,"forceConsistentCasingInFileNames":true,"resolveJsonModule":true,"moduleResolution":"Node","emitDecoratorMetadata":true,"experimentalDecorators":true,"sourceMap":true,"isolatedModules":true},"include":["src/**/*.ts","scripts/**/*.ts"],"exclude":["node_modules","dist","frontend"]}' > tsconfig.json
 # 显示tsconfig.json文件内容
 RUN cat tsconfig.json
 # 创建环境变量文件
