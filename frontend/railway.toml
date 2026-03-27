@@ -1,6 +1,0 @@
-[build]
-builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile"
-
-[deploy]
-# 使用Dockerfile中的CMD命令，不覆盖
