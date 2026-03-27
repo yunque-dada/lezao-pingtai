@@ -5,15 +5,7 @@ COPY package*.json ./
 # 安装依赖，包括TypeScript
 RUN npm install
 # 创建server.js文件
-RUN echo 'const http = require("http");' > server.js && \
-    echo 'const server = http.createServer((req, res) => {' >> server.js && \
-    echo '  res.statusCode = 200;' >> server.js && \
-    echo '  res.setHeader("Content-Type", "text/plain");' >> server.js && \
-    echo '  res.end("Hello World!\n");' >> server.js && \
-    echo '});' >> server.js && \
-    echo 'server.listen(5000, () => {' >> server.js && \
-    echo '  console.log("Server running on port 5000");' >> server.js && \
-    echo '});' >> server.js
+RUN echo 'const http = require("http"); const server = http.createServer((req, res) => { res.statusCode = 200; res.setHeader("Content-Type", "text/plain"); res.end("Hello World!"); }); server.listen(5000, () => { console.log("Server running on port 5000"); });' > server.js
 # 详细列出当前目录内容，检查文件是否正确复制
 RUN ls -la
 # 检查是否存在package.json文件
