@@ -10,7 +10,7 @@ RUN ls -la
 # 检查是否存在src目录
 RUN ls -la src/ || echo "src目录不存在"
 # 检查是否存在tsconfig.json文件，如果不存在则创建
-RUN if [ -f tsconfig.json ]; then echo "tsconfig.json存在"; else echo "tsconfig.json不存在，创建默认配置"; cat > tsconfig.json << 'EOF'
+RUN bash -c 'if [ -f tsconfig.json ]; then echo "tsconfig.json存在"; else echo "tsconfig.json不存在，创建默认配置"; cat > tsconfig.json << "EOF"
 {
   "compilerOptions": {
     "target": "ES2020",
@@ -33,7 +33,7 @@ RUN if [ -f tsconfig.json ]; then echo "tsconfig.json存在"; else echo "tsconfi
   "exclude": ["node_modules", "dist"]
 }
 EOF
-fi
+fi'
 # 显示tsconfig.json文件内容
 RUN cat tsconfig.json
 # 创建环境变量文件
@@ -53,6 +53,6 @@ RUN npx tsc --project tsconfig.json
 # 检查编译结果
 RUN ls -la dist/
 # 检查server.js文件是否存在
-RUN if [ -f dist/server.js ]; then echo "server.js存在"; else echo "server.js不存在"; fi
+RUN bash -c 'if [ -f dist/server.js ]; then echo "server.js存在"; else echo "server.js不存在"; fi'
 EXPOSE 5000
 CMD ["npm", "start"]
