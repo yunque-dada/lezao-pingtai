@@ -94,12 +94,14 @@ const ScratchEditor: React.FC = () => {
     } else {
       navigate('/student/scratch-projects');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, navigate]);
 
   useEffect(() => {
     if (projectId && projectId !== 'new' && !loading && !hasOpenedEditorRef.current) {
       openProjectEditor();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId, navigate, loading]);
 
   useEffect(() => {
