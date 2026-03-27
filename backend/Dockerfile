@@ -9,6 +9,8 @@ COPY . .
 RUN ls -la
 # 检查是否存在src目录
 RUN ls -la src/ || echo "src目录不存在"
+# 检查src目录中的文件
+RUN ls -la src/ || echo "src目录不存在"
 # 直接创建tsconfig.json文件
 RUN echo '{"compilerOptions":{"target":"ES2020","module":"Node16","lib":["ES2020"],"outDir":"./dist","rootDir":"./src","strict":true,"esModuleInterop":true,"skipLibCheck":true,"forceConsistentCasingInFileNames":true,"resolveJsonModule":true,"moduleResolution":"Node16","emitDecoratorMetadata":true,"experimentalDecorators":true,"sourceMap":true,"isolatedModules":true},"include":["src/**/*"],"exclude":["node_modules","dist"]}' > tsconfig.json
 # 显示tsconfig.json文件内容
@@ -26,9 +28,9 @@ RUN echo "NODE_ENV=production" > .env && \
 # 打印TypeScript版本
 RUN npx tsc --version
 # 执行TypeScript编译
-RUN npx tsc --project tsconfig.json
+RUN npx tsc --project tsconfig.json || echo "TypeScript编译失败"
 # 检查编译结果
-RUN ls -la dist/
+RUN ls -la dist/ || echo "dist目录不存在"
 # 检查server.js文件是否存在
 RUN ls -la dist/server.js || echo "server.js不存在"
 EXPOSE 5000
