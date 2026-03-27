@@ -10,8 +10,11 @@ RUN npm install
 # 复制所有源代码
 COPY . .
 
+# 检查文件结构
+RUN ls -la && ls -la src/
+
 # 编译TypeScript代码
-RUN npm run build
+RUN npx tsc --project tsconfig.json
 
 # 检查编译输出
 RUN ls -la dist/
