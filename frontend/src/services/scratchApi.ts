@@ -6,7 +6,8 @@ import {
   ScratchProjectListResponse,
 } from '../types/scratch';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// 使用相对路径，通过前端服务器代理
+const API_BASE_URL = '/api';
 
 export const scratchApi = {
   getAllProjects: async (filter?: ScratchProjectFilter): Promise<ScratchProjectListResponse> => {

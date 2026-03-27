@@ -1,4 +1,5 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
+// 确保API_BASE_URL是正确的相对路径
+let API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
 
 interface ApiResponse<T = any> {
   success: boolean;
@@ -7,7 +8,6 @@ interface ApiResponse<T = any> {
   pagination?: {
     page: number;
     limit: number;
-    total: number;
     pages: number;
   };
 }
@@ -16,7 +16,14 @@ class ApiService {
   private baseUrl: string;
 
   constructor(baseUrl: string) {
-    this.baseUrl = baseUrl;
+    // 在浏览器环境中防止URL重复的问题
+    let cleanedBaseUrl = baseUrl;
+    if (typeof window !== 'undefined') {
+      if (cleanedBaseUrl.includes('://') && cleanedBaseUrl.includes(window.location.hostname)) {
+        cleanedBaseUrl = '/api';
+      }
+    }
+    this.baseUrl = cleanedBaseUrl;
   }
 
   private getAuthToken(): string | null {
@@ -43,7 +50,21 @@ class ApiService {
     }
 
     try {
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
+      // 确保endpoint以/开头
+      const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+      // 构建最终URL，确保不会重复
+      let finalUrl: string;
+      if (this.baseUrl.startsWith('http')) {
+        // 如果baseUrl是完整URL
+        finalUrl = `${this.baseUrl}${cleanEndpoint}`;
+      } else {
+        // 如果是相对路径，确保正确拼接
+        finalUrl = `${this.baseUrl}${cleanEndpoint}`;
+      }
+      
+      console.log('API请求URL:', finalUrl);
+      
+      const response = await fetch(finalUrl, {
         ...options,
         headers,
       });

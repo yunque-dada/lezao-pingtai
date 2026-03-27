@@ -8,7 +8,8 @@ class SocketService {
   connect(token: string) {
     this.token = token;
     
-    this.socket = io(process.env.REACT_APP_API_URL || 'http://localhost:5000', {
+    // 使用当前域名连接Socket.io
+    this.socket = io('/', {
       auth: { token },
       transports: ['websocket', 'polling'],
     });
