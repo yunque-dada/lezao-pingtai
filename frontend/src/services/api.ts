@@ -17,14 +17,8 @@ class ApiService {
   private baseUrl: string;
 
   constructor(baseUrl: string) {
-    // 在浏览器环境中防止URL重复的问题
-    let cleanedBaseUrl = baseUrl;
-    if (typeof window !== 'undefined') {
-      if (cleanedBaseUrl.includes('://') && cleanedBaseUrl.includes(window.location.hostname)) {
-        cleanedBaseUrl = '/api';
-      }
-    }
-    this.baseUrl = cleanedBaseUrl;
+    // 在浏览器环境中使用相对路径，避免CORS问题
+    this.baseUrl = '/api';
   }
 
   private getAuthToken(): string | null {
@@ -53,15 +47,8 @@ class ApiService {
     try {
       // 确保endpoint以/开头
       const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-      // 构建最终URL，确保不会重复
-      let finalUrl: string;
-      if (this.baseUrl.startsWith('http')) {
-        // 如果baseUrl是完整URL
-        finalUrl = `${this.baseUrl}${cleanEndpoint}`;
-      } else {
-        // 如果是相对路径，确保正确拼接
-        finalUrl = `${this.baseUrl}${cleanEndpoint}`;
-      }
+      // 构建最终URL
+      const finalUrl = `${this.baseUrl}${cleanEndpoint}`;
       
       console.log('API请求URL:', finalUrl);
       
@@ -69,6 +56,19 @@ class ApiService {
         ...options,
         headers,
       });
+
+      console.log('API响应状态:', response.status);
+      
+      // 检查响应是否为JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('API响应不是JSON:', text);
+        return {
+          success: false,
+          message: '服务器返回了非JSON响应',
+        };
+      }
 
       const data = await response.json();
 
@@ -96,6 +96,7 @@ class ApiService {
         data,
       };
     } catch (error: any) {
+      console.error('API请求错误:', error);
       return {
         success: false,
         message: error.message || '网络错误',
