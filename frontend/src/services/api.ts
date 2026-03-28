@@ -1,5 +1,5 @@
-// 确保API_BASE_URL是正确的相对路径
-let API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
+// 直接使用完整的后端URL
+let API_BASE_URL = process.env.REACT_APP_API_URL || 'https://lezao-pingtai-houduan-production.up.railway.app/api';
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -17,8 +17,7 @@ class ApiService {
   private baseUrl: string;
 
   constructor(baseUrl: string) {
-    // 在浏览器环境中使用相对路径，避免CORS问题
-    this.baseUrl = '/api';
+    this.baseUrl = baseUrl;
   }
 
   private getAuthToken(): string | null {
