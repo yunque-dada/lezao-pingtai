@@ -23,6 +23,14 @@ const setDefaultEnvVars = (): void => {
   if (!process.env.REDIS_PORT) {
     process.env.REDIS_PORT = '6379';
   }
+  
+  if (!process.env.CLIENT_URL) {
+    process.env.CLIENT_URL = process.env.CORS_ORIGIN || 'http://localhost:3000';
+  }
+  
+  if (!process.env.CORS_ORIGIN) {
+    process.env.CORS_ORIGIN = process.env.CLIENT_URL || 'http://localhost:3000';
+  }
 };
 
 const validateEnv = (): void => {

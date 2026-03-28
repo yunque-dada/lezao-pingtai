@@ -5,8 +5,19 @@ module.exports = function(app) {
   app.use(
     '/scratch3-master',
     createProxyMiddleware({
-      target: 'http://localhost:5000',
+      target: process.env.REACT_APP_API_URL || 'http://localhost:5000',
       changeOrigin: true,
+      secure: false,
+    })
+  );
+  
+  // 代理 API 请求
+  app.use(
+    '/api',
+    createProxyMiddleware({
+      target: process.env.REACT_APP_API_URL || 'http://localhost:5000',
+      changeOrigin: true,
+      secure: false,
     })
   );
 };

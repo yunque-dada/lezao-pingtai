@@ -1,4 +1,4 @@
-import express, { Application } from 'express';
+import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -13,6 +13,15 @@ import { apiLimiter } from './middleware/rateLimiter';
 dotenv.config();
 
 const app: Application = express();
+
+// 全局错误捕获 - 确保在任何错误情况下都返回JSON
+process.on('uncaughtException', (err) => {
+  console.error('未捕获的异常:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('未处理的Promise拒绝:', reason);
+});
 
 // 暂时禁用 securityHeaders 中间件，解决跨源资源加载问题
 // app.use(securityHeaders);
@@ -106,11 +115,24 @@ app.use('/api/', apiLimiter);
 
 app.use('/api', routes);
 
+// 404处理
 app.use((req, res) => {
   res.status(404).json({
     success: false,
     message: '请求的资源不存在',
     path: req.path,
+  });
+});
+
+// 全局错误处理中间件 - 确保返回JSON格式
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  console.error('Express错误:', err);
+  
+  // 确保返回JSON而不是HTML
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || '服务器内部错误',
+    error: process.env.NODE_ENV === 'development' ? err.stack : undefined
   });
 });
 
