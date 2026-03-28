@@ -24,12 +24,15 @@ const setDefaultEnvVars = (): void => {
     process.env.REDIS_PORT = '6379';
   }
   
+  // 修复循环依赖问题
+  const defaultOrigin = 'http://localhost:3000';
+  
   if (!process.env.CLIENT_URL) {
-    process.env.CLIENT_URL = process.env.CORS_ORIGIN || 'http://localhost:3000';
+    process.env.CLIENT_URL = process.env.CORS_ORIGIN || defaultOrigin;
   }
   
   if (!process.env.CORS_ORIGIN) {
-    process.env.CORS_ORIGIN = process.env.CLIENT_URL || 'http://localhost:3000';
+    process.env.CORS_ORIGIN = process.env.CLIENT_URL || defaultOrigin;
   }
 };
 
