@@ -1,0 +1,35 @@
+# 构建阶段
+FROM node:18 AS builder
+
+WORKDIR /app/frontend
+
+# 复制前端package.json
+COPY frontend/package*.json ./
+RUN npm install
+
+# 复制前端源代码
+COPY frontend/ .
+
+# 构建React应用
+RUN npm run build
+
+# 生产阶段
+FROM node:18-alpine
+
+WORKDIR /app
+
+# 复制构建好的前端文件
+COPY --from=builder /app/frontend/build ./build
+
+# 复制server.js
+COPY frontend/server.js .
+
+# 复制scratch3-master目录
+COPY scratch3-master ./scratch3-master
+
+# 安装express
+RUN npm init -y && npm install express
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]
