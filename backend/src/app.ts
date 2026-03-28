@@ -14,6 +14,9 @@ dotenv.config();
 
 const app: Application = express();
 
+// 设置trust proxy，解决X-Forwarded-For头部警告
+app.set('trust proxy', true);
+
 // 全局错误捕获 - 确保在任何错误情况下都返回JSON
 process.on('uncaughtException', (err) => {
   console.error('未捕获的异常:', err);
@@ -124,18 +127,7 @@ app.use((req, res) => {
   });
 });
 
-// 全局错误处理中间件 - 确保返回JSON格式
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  console.error('Express错误:', err);
-  
-  // 确保返回JSON而不是HTML
-  res.status(err.status || 500).json({
-    success: false,
-    message: err.message || '服务器内部错误',
-    error: process.env.NODE_ENV === 'development' ? err.stack : undefined
-  });
-});
-
+// 使用自定义错误处理中间件
 app.use(errorHandler);
 
 export default app;
