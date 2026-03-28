@@ -13,7 +13,8 @@ app.use('/api', createProxyMiddleware({
   secure: false,
   pathRewrite: {
     '^/api': '/api'
-  }
+  },
+  logLevel: 'debug'
 }));
 
 // 代理scratch3-master请求到后端
