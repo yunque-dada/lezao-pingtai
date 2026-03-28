@@ -36,12 +36,12 @@ const ScratchEditor: React.FC = () => {
       // 获取用户token
       const token = localStorage.getItem('token');
       // 构建编辑器URL，注入自定义资源配置
-      const editorUrl = new URL('http://localhost:5000/scratch3-master/index.html');
+      const editorUrl = new URL(`${window.location.origin}/scratch3-master/index.html`);
       editorUrl.searchParams.set('token', token || '');
       // 注入自定义角色库API配置
-      editorUrl.searchParams.set('spriteApi', 'http://localhost:5000/api/scratch/resources/sprites/json');
-      editorUrl.searchParams.set('backdropApi', 'http://localhost:5000/api/scratch/resources/backdrops/json');
-      editorUrl.searchParams.set('soundApi', 'http://localhost:5000/api/scratch/resources/sounds/json');
+      editorUrl.searchParams.set('spriteApi', `${window.location.origin}/api/scratch/resources/sprites/json`);
+      editorUrl.searchParams.set('backdropApi', `${window.location.origin}/api/scratch/resources/backdrops/json`);
+      editorUrl.searchParams.set('soundApi', `${window.location.origin}/api/scratch/resources/sounds/json`);
       
       // 在新窗口中打开Scratch 3.0编辑器
       window.open(editorUrl.toString(), '_blank');
@@ -70,13 +70,13 @@ const ScratchEditor: React.FC = () => {
     
     const token = localStorage.getItem('token');
     // 构建编辑器URL，注入自定义资源配置
-    const editorUrl = new URL('http://localhost:5000/scratch3-master/index.html');
+    const editorUrl = new URL(`${window.location.origin}/scratch3-master/index.html`);
     editorUrl.searchParams.set('projectId', projectId || '');
     editorUrl.searchParams.set('token', token || '');
     // 注入自定义角色库API配置
-    editorUrl.searchParams.set('spriteApi', 'http://localhost:5000/api/scratch/resources/sprites/json');
-    editorUrl.searchParams.set('backdropApi', 'http://localhost:5000/api/scratch/resources/backdrops/json');
-    editorUrl.searchParams.set('soundApi', 'http://localhost:5000/api/scratch/resources/sounds/json');
+    editorUrl.searchParams.set('spriteApi', `${window.location.origin}/api/scratch/resources/sprites/json`);
+    editorUrl.searchParams.set('backdropApi', `${window.location.origin}/api/scratch/resources/backdrops/json`);
+    editorUrl.searchParams.set('soundApi', `${window.location.origin}/api/scratch/resources/sounds/json`);
     
     window.open(editorUrl.toString(), '_blank');
     setTimeout(() => {
@@ -134,7 +134,7 @@ const ScratchEditor: React.FC = () => {
       </div>
       <div className="scratch-editor-content">
         <p>正在打开Scratch 3.0编辑器...</p>
-        <p>如果编辑器没有自动打开，请点击 <a href="http://localhost:5000/scratch3-master/index.html" target="_blank" rel="noopener noreferrer">这里</a> 手动打开。</p>
+        <p>如果编辑器没有自动打开，请点击 <a href="/scratch3-master/index.html" target="_blank" rel="noopener noreferrer">这里</a> 手动打开。</p>
       </div>
     </div>
   );

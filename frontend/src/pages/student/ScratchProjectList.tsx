@@ -55,13 +55,13 @@ const ScratchProjectList: React.FC = () => {
   const handleOpenProject = (filename: string) => {
     // 打开项目，使用文件名作为标识
     const token = localStorage.getItem('token');
-    const editorUrl = new URL('http://localhost:5000/scratch3-master/index.html');
+    const editorUrl = new URL(`${window.location.origin}/scratch3-master/index.html`);
     editorUrl.searchParams.set('filename', filename);
     editorUrl.searchParams.set('token', token || '');
     // 注入自定义角色库API配置
-    editorUrl.searchParams.set('spriteApi', 'http://localhost:5000/api/scratch/resources/sprites/json');
-    editorUrl.searchParams.set('backdropApi', 'http://localhost:5000/api/scratch/resources/backdrops/json');
-    editorUrl.searchParams.set('soundApi', 'http://localhost:5000/api/scratch/resources/sounds/json');
+    editorUrl.searchParams.set('spriteApi', `${window.location.origin}/api/scratch/resources/sprites/json`);
+    editorUrl.searchParams.set('backdropApi', `${window.location.origin}/api/scratch/resources/backdrops/json`);
+    editorUrl.searchParams.set('soundApi', `${window.location.origin}/api/scratch/resources/sounds/json`);
     
     window.open(editorUrl.toString(), '_blank');
   };

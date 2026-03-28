@@ -54,7 +54,7 @@ const ScratchEditor: React.FC<ScratchEditorProps> = ({
   };
 
   const getEditorUrl = () => {
-    const baseUrl = 'http://localhost:5000/scratch3-master/index.html';
+    const baseUrl = `${window.location.origin}/scratch3-master/index.html`;
     const params = new URLSearchParams();
     if (projectId) {
       params.append('projectId', projectId);
