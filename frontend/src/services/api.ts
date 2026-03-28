@@ -1,5 +1,5 @@
 // 直接使用完整的后端URL
-let API_BASE_URL = process.env.REACT_APP_API_URL || 'https://lezao-pingtai-houduan-production.up.railway.app/api';
+let API_BASE_URL = 'https://lezao-pingtai-houduan-production.up.railway.app/api';
 
 export interface ApiResponse<T = any> {
   success: boolean;
