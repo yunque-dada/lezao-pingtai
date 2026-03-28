@@ -10,14 +10,10 @@ const BACKEND_URL = process.env.BACKEND_URL || 'https://lezao-pingtai-houduan-pr
 app.use('/api', createProxyMiddleware({
   target: BACKEND_URL,
   changeOrigin: true,
-  secure: false
-}));
-
-// 代理auth请求到后端
-app.use('/auth', createProxyMiddleware({
-  target: BACKEND_URL,
-  changeOrigin: true,
-  secure: false
+  secure: false,
+  pathRewrite: {
+    '^/api': '/api'
+  }
 }));
 
 // 代理scratch3-master请求到后端
