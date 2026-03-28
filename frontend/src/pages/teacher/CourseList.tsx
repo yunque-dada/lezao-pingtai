@@ -24,7 +24,7 @@ const CourseList: React.FC = () => {
       if (filter.search) params.search = filter.search;
 
       const response = await courseApi.getMyCourses(params);
-      if (response.success) {
+      if (response.success && response.data) {
         setCourses(response.data.data || []);
       }
     } catch (error) {

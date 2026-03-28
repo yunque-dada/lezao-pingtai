@@ -1,17 +1,5 @@
-import api from './api';
+import api, { ApiResponse } from './api';
 import { Course, CourseFormData, CourseStats, CourseFilter } from '../types/course';
-
-interface ApiResponse<T> {
-  success: boolean;
-  data: T;
-  message?: string;
-  pagination?: {
-    page: number;
-    limit: number;
-    total: number;
-    pages: number;
-  };
-}
 
 export const courseApi = {
   getCourses: async (params?: {

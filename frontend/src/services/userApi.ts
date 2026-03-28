@@ -1,17 +1,5 @@
-import apiService from './api';
+import apiService, { ApiResponse } from './api';
 import { User, UserFilter, UserFormData } from '../types/user';
-
-interface ApiResponse<T = any> {
-  success: boolean;
-  message: string;
-  data?: T;
-  pagination?: {
-    total: number;
-    page: number;
-    limit: number;
-    pages: number;
-  };
-}
 
 export const userApi = {
   async getUsers(params?: UserFilter & { page?: number; limit?: number }): Promise<ApiResponse<{ users: User[] }>> {

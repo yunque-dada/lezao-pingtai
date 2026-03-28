@@ -1,23 +1,39 @@
-// 必需的环境变量
-const requiredEnvVars = [
-  'NODE_ENV',
-  'PORT',
-  'MONGODB_URI',
-  'JWT_SECRET',
-];
-
-// 可选的环境变量（有默认值）
-const optionalEnvVars = [
-  { name: 'JWT_EXPIRE', defaultValue: '7d' },
-  { name: 'REDIS_HOST', defaultValue: 'localhost' },
-  { name: 'REDIS_PORT', defaultValue: '6379' },
-];
+// 设置环境变量默认值
+const setDefaultEnvVars = (): void => {
+  if (!process.env.NODE_ENV) {
+    process.env.NODE_ENV = 'production';
+  }
+  
+  if (!process.env.PORT) {
+    process.env.PORT = '5000';
+  }
+  
+  if (!process.env.JWT_SECRET) {
+    process.env.JWT_SECRET = 'railway-default-secret-key-change-in-production';
+  }
+  
+  if (!process.env.JWT_EXPIRE) {
+    process.env.JWT_EXPIRE = '7d';
+  }
+  
+  if (!process.env.REDIS_HOST) {
+    process.env.REDIS_HOST = 'localhost';
+  }
+  
+  if (!process.env.REDIS_PORT) {
+    process.env.REDIS_PORT = '6379';
+  }
+};
 
 const validateEnv = (): void => {
+  // 设置默认值
+  setDefaultEnvVars();
+  
+  // 只检查最关键的环境变量
+  const criticalEnvVars = ['MONGODB_URI'];
   const missingVars: string[] = [];
 
-  // 检查必需的环境变量
-  requiredEnvVars.forEach((varName) => {
+  criticalEnvVars.forEach((varName) => {
     if (!process.env[varName]) {
       missingVars.push(varName);
     }
@@ -30,14 +46,6 @@ const validateEnv = (): void => {
     });
     process.exit(1);
   }
-
-  // 为可选的环境变量设置默认值
-  optionalEnvVars.forEach(({ name, defaultValue }) => {
-    if (!process.env[name]) {
-      process.env[name] = defaultValue;
-      console.log(`环境变量 ${name} 未设置，使用默认值: ${defaultValue}`);
-    }
-  });
 
   console.log('环境变量验证通过');
 };

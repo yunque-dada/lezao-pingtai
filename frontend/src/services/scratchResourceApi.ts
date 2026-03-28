@@ -193,7 +193,8 @@ export const scratchResourceApi = {
     formData.append('file', file);
     formData.append('type', type);
     
-    const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+    // 使用相对路径
+    const API_BASE_URL = '/api';
     const token = localStorage.getItem('token');
     
     const response = await fetch(`${API_BASE_URL}/scratch-resources/upload`, {
@@ -223,7 +224,8 @@ export const scratchResourceApi = {
       formData.append('tags', tags.join(','));
     }
 
-    const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+    // 使用相对路径
+    const API_BASE_URL = '/api';
     const token = localStorage.getItem('token');
 
     const response = await fetch(`${API_BASE_URL}/scratch/resources/sprites/upload`, {
