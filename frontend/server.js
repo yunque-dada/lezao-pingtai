@@ -1,28 +1,11 @@
 const express = require('express');
-const { createProxyMiddleware } = require('http-proxy-middleware');
 const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const BACKEND_URL = process.env.BACKEND_URL || 'https://lezao-pingtai-houduan-production.up.railway.app';
 
-// 代理API请求到后端
-app.use('/api', createProxyMiddleware({
-  target: BACKEND_URL,
-  changeOrigin: true,
-  secure: false,
-  pathRewrite: {
-    '^/api': '/api'
-  },
-  logLevel: 'debug'
-}));
-
-// 代理scratch3-master请求到后端
-app.use('/scratch3-master', createProxyMiddleware({
-  target: BACKEND_URL,
-  changeOrigin: true,
-  secure: false
-}));
+// 提供scratch3-master静态文件服务
+app.use('/scratch3-master', express.static(path.join(__dirname, 'scratch3-master')));
 
 // 提供静态文件
 app.use(express.static(path.join(__dirname, 'build')));
