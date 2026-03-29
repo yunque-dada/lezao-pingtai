@@ -2,7 +2,7 @@ FROM node:18
 WORKDIR /app
 
 # 复制scratch3-master目录
-COPY scratch3-master/ ../scratch3-master/
+COPY scratch3-master/ ./scratch3-master/
 
 # 构建scratch3-master
 WORKDIR /app/scratch3-master

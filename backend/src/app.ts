@@ -52,7 +52,7 @@ app.use('/scratch3-master', (req, res, next) => {
   res.removeHeader('Content-Security-Policy');
   res.removeHeader('X-Content-Type-Options');
   next();
-}, express.static('../scratch3-master/build', {
+}, express.static('./scratch3-master/build', {
   setHeaders: (res, path) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
@@ -69,7 +69,7 @@ app.use('/scratch3-master', (req, res, next) => {
   res.removeHeader('Content-Security-Policy');
   res.removeHeader('X-Content-Type-Options');
   next();
-}, express.static('../scratch3-master', {
+}, express.static('./scratch3-master', {
   setHeaders: (res, path) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
@@ -86,7 +86,7 @@ app.use('/static', (req, res, next) => {
   res.removeHeader('Content-Security-Policy');
   res.removeHeader('X-Content-Type-Options');
   next();
-}, express.static('../scratch3-master/static', {
+}, express.static('./scratch3-master/static', {
   setHeaders: (res, path) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
