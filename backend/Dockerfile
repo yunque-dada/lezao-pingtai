@@ -1,6 +1,19 @@
 FROM node:18
 WORKDIR /app
 
+# 复制scratch3-master目录
+COPY scratch3-master/ ../scratch3-master/
+
+# 构建scratch3-master
+WORKDIR /app/scratch3-master
+RUN npm install --legacy-peer-deps && npm run build:prod
+
+# 检查scratch3-master构建结果
+RUN ls -la && ls -la build/
+
+# 回到backend目录
+WORKDIR /app
+
 # 复制backend目录的package.json和package-lock.json
 COPY backend/package*.json ./
 
@@ -11,7 +24,7 @@ RUN npm install --legacy-peer-deps
 COPY backend/ ./
 
 # 检查文件结构
-RUN ls -la && ls -la src/
+RUN ls -la && ls -la src/ && ls -la ../
 
 # 编译TypeScript代码
 RUN npx tsc --project tsconfig.json
