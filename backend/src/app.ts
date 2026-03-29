@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import compression from 'compression';
 import errorHandler from './middleware/errorHandler';
 import responseMiddleware from './middleware/responseMiddleware';
 import { securityHeaders, corsOptions } from './middleware/security';
@@ -16,6 +17,9 @@ const app: Application = express();
 
 // 设置trust proxy，解决X-Forwarded-For头部警告
 app.set('trust proxy', true);
+
+// 启用Gzip压缩，优化静态文件加载速度
+app.use(compression());
 
 // 全局错误捕获 - 确保在任何错误情况下都返回JSON
 process.on('uncaughtException', (err) => {
