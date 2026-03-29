@@ -35,13 +35,15 @@ const ScratchEditor: React.FC = () => {
       setLoading(true);
       // 获取用户token
       const token = localStorage.getItem('token');
+      // 使用后端URL加载Scratch编辑器
+      const BACKEND_URL = 'https://lezao-pingtai-houduan-production.up.railway.app';
       // 构建编辑器URL，注入自定义资源配置
-      const editorUrl = new URL(`${window.location.origin}/scratch3-master/index.html`);
+      const editorUrl = new URL(`${BACKEND_URL}/scratch3-master/index.html`);
       editorUrl.searchParams.set('token', token || '');
       // 注入自定义角色库API配置
-      editorUrl.searchParams.set('spriteApi', `${window.location.origin}/api/scratch/resources/sprites/json`);
-      editorUrl.searchParams.set('backdropApi', `${window.location.origin}/api/scratch/resources/backdrops/json`);
-      editorUrl.searchParams.set('soundApi', `${window.location.origin}/api/scratch/resources/sounds/json`);
+      editorUrl.searchParams.set('spriteApi', `${BACKEND_URL}/api/scratch/resources/sprites/json`);
+      editorUrl.searchParams.set('backdropApi', `${BACKEND_URL}/api/scratch/resources/backdrops/json`);
+      editorUrl.searchParams.set('soundApi', `${BACKEND_URL}/api/scratch/resources/sounds/json`);
       
       // 在新窗口中打开Scratch 3.0编辑器
       window.open(editorUrl.toString(), '_blank');
@@ -69,14 +71,16 @@ const ScratchEditor: React.FC = () => {
     hasOpenedEditorRef.current = true;
     
     const token = localStorage.getItem('token');
+    // 使用后端URL加载Scratch编辑器
+    const BACKEND_URL = 'https://lezao-pingtai-houduan-production.up.railway.app';
     // 构建编辑器URL，注入自定义资源配置
-    const editorUrl = new URL(`${window.location.origin}/scratch3-master/index.html`);
+    const editorUrl = new URL(`${BACKEND_URL}/scratch3-master/index.html`);
     editorUrl.searchParams.set('projectId', projectId || '');
     editorUrl.searchParams.set('token', token || '');
     // 注入自定义角色库API配置
-    editorUrl.searchParams.set('spriteApi', `${window.location.origin}/api/scratch/resources/sprites/json`);
-    editorUrl.searchParams.set('backdropApi', `${window.location.origin}/api/scratch/resources/backdrops/json`);
-    editorUrl.searchParams.set('soundApi', `${window.location.origin}/api/scratch/resources/sounds/json`);
+    editorUrl.searchParams.set('spriteApi', `${BACKEND_URL}/api/scratch/resources/sprites/json`);
+    editorUrl.searchParams.set('backdropApi', `${BACKEND_URL}/api/scratch/resources/backdrops/json`);
+    editorUrl.searchParams.set('soundApi', `${BACKEND_URL}/api/scratch/resources/sounds/json`);
     
     window.open(editorUrl.toString(), '_blank');
     setTimeout(() => {
