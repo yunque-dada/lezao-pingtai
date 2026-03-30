@@ -11,6 +11,19 @@ import xssSanitize from './middleware/xss';
 import routes from './routes';
 import { apiLimiter } from './middleware/rateLimiter';
 
+// 配置压缩中间件，启用更高的压缩级别
+const compressionOptions = {
+  level: 9, // 最高压缩级别
+  threshold: 1024, // 1KB以上的文件才压缩
+  filter: (req: Request, res: Response) => {
+    // 只压缩静态文件
+    if (req.path.includes('/scratch3-master') || req.path.includes('/static')) {
+      return true;
+    }
+    return compression.filter(req, res);
+  }
+};
+
 dotenv.config();
 
 const app: Application = express();
@@ -19,7 +32,7 @@ const app: Application = express();
 app.set('trust proxy', true);
 
 // 启用Gzip压缩，优化静态文件加载速度
-app.use(compression());
+app.use(compression(compressionOptions));
 
 // 全局错误捕获 - 确保在任何错误情况下都返回JSON
 process.on('uncaughtException', (err) => {
@@ -60,7 +73,10 @@ app.use('/scratch3-master', (req, res, next) => {
   setHeaders: (res, path) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  }
+    // 添加浏览器缓存，缓存静态文件30天
+    res.setHeader('Cache-Control', 'public, max-age=2592000');
+  },
+  maxAge: '30d' // 30天缓存
 }));
 
 // 提供 scratch3-master 根目录的静态文件（包括 static 目录下的原生素材）
@@ -77,7 +93,10 @@ app.use('/scratch3-master', (req, res, next) => {
   setHeaders: (res, path) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  }
+    // 添加浏览器缓存，缓存静态文件30天
+    res.setHeader('Cache-Control', 'public, max-age=2592000');
+  },
+  maxAge: '30d' // 30天缓存
 }));
 
 // 提供 /static 路径的静态文件服务（直接映射到 scratch3-master/static）
@@ -94,7 +113,10 @@ app.use('/static', (req, res, next) => {
   setHeaders: (res, path) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-  }
+    // 添加浏览器缓存，缓存静态文件30天
+    res.setHeader('Cache-Control', 'public, max-age=2592000');
+  },
+  maxAge: '30d' // 30天缓存
 }));
 
 // 提供测试页面
