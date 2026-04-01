@@ -105,6 +105,74 @@
         customButtons: [
           {
             show: true, //是否显示
+            buttonName: '保存到作品', //按钮名
+            style:{ //按钮样式
+              color: 'white',
+              background: 'hsla(215, 100%, 65%, 1)',
+            },
+            handleClick:async ()=>{ //按钮事件
+              console.log('保存到作品按钮点击');
+              
+              // 获取项目名
+              var projectName = window.scratch.getProjectName() || '未命名作品';
+              console.log('项目名:', projectName);
+              
+              // 获取项目文件
+              window.scratch.getProjectFile(async (file) => {
+                console.log('获取到项目文件，大小:', file.size);
+                
+                try {
+                  // 从URL参数中获取token和projectId
+                  const urlParams = new URLSearchParams(window.location.search);
+                  const token = urlParams.get('token');
+                  const projectId = urlParams.get('projectId');
+                  
+                  if (!token) {
+                    alert('请先登录');
+                    return;
+                  }
+                  
+                  // 创建FormData
+                  const formData = new FormData();
+                  formData.append('file', file, projectName + '.sb3');
+                  formData.append('title', projectName);
+                  if (projectId && projectId !== 'new') {
+                    formData.append('projectId', projectId);
+                  }
+                  
+                  // 使用相对路径或当前域名发送保存请求
+                  const apiUrl = window.location.protocol + '//' + window.location.host + '/api/scratch/projects/save';
+                  console.log('保存请求URL:', apiUrl);
+                  
+                  const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                      'Authorization': 'Bearer ' + token
+                    },
+                    body: formData
+                  });
+                  
+                  const result = await response.json();
+                  if (result.success) {
+                    alert('保存成功！');
+                    // 如果有新项目ID，更新URL参数
+                    if (result.data && result.data._id) {
+                      const newUrl = new URL(window.location.href);
+                      newUrl.searchParams.set('projectId', result.data._id);
+                      window.history.replaceState({}, '', newUrl.toString());
+                    }
+                  } else {
+                    alert('保存失败: ' + (result.message || '未知错误'));
+                  }
+                } catch (error) {
+                  console.error('保存失败:', error);
+                  alert('保存失败，请检查网络连接');
+                }
+              });
+            }
+          },
+          {
+            show: true, //是否显示
             buttonName: '分享', //按钮名
             style:{ //按钮样式
               color: 'white',
