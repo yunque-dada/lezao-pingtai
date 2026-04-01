@@ -26,28 +26,19 @@ const ScratchEditor: React.FC = () => {
     }
   };
 
-  const createNewProject = async () => {
+  const createNewProject = () => {
     if (hasOpenedEditorRef.current) return;
     
     hasOpenedEditorRef.current = true;
     
     try {
       setLoading(true);
-      // 创建新项目并保存到账户
-      const newProject = await scratchApi.createProject({
-        title: '新建Scratch项目',
-        description: '通过Scratch 3.0编辑器创建的新项目',
-        isPublic: false,
-        tags: []
-      });
-      
       // 获取用户token
       const token = localStorage.getItem('token');
       // 使用后端URL加载Scratch编辑器
       const BACKEND_URL = 'https://lezao-pingtai-houduan-production.up.railway.app';
       // 构建编辑器URL，注入自定义资源配置
       const editorUrl = new URL(`${BACKEND_URL}/scratch3-master/index.html`);
-      editorUrl.searchParams.set('projectId', newProject._id);
       editorUrl.searchParams.set('token', token || '');
       // 注入自定义角色库API配置
       editorUrl.searchParams.set('spriteApi', `${BACKEND_URL}/api/scratch/resources/sprites/json`);
