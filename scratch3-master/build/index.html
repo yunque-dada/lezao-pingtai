@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google" value="notranslate">
+  <link rel="shortcut icon" href="static/favicon.ico">
+  <title>EasyScratch 3.0</title>
+  
+  <script>
+    window.scratchConfig = {
+      session: {
+        token: "", // 用户Token
+        username: "Username" //用户名
+      },
+      backpack:{
+        enable: true, // 是否启用背包
+        api: "/api/teaching/scratch/backpack", //背包API接口
+      },
+      cloudData:{
+        enable: true, //是否开启云变量功能
+        id: "create", //默认云变量ID，可使用window.scratch.setCloudId更换ID
+        api: window.location.hostname + ":8081/api/websocket/scratch/cloudData" //云变量API地址
+      },
+      projectInfo: {//作品信息
+        projectName: "",
+        authorUsername: "admin",
+        authorAvatar: './static/avatar.png',
+      },
+      logo: {
+        show: true, //是否显示
+        url:  window.location.protocol+"//"+window.location.host + "/static/logo.png", //logo地址，支持base64图片
+        handleClickLogo: () => { //处理LOGO点击事件
+        }
+      },
+      menuBar: {
+        //菜单栏样式
+        style: {
+          background: 'hsla(215, 100%, 65%, 1)',
+        },
+        //切换语言按钮
+        languageButton:{
+          show: true, //是否显示
+          defaultLanguage: 'zh-cn' //默认语言 en zh-cn zh-tw
+        },
+        //新建按钮
+        newButton:{
+          show: true, //是否显示
+          handleBefore(){
+            //拦截点击事件，返回true继续执行
+            return true
+          }
+        },
+        //从计算机加载按钮
+        loadFileButton:{
+          show: true, //是否显示
+          handleBefore(){
+            //拦截点击事件，返回true继续执行
+            return true
+          }
+        },
+        //保存到计算机按钮
+        saveFileButton:{
+          show: true, //是否显示
+          handleBefore(){
+            //拦截点击事件，返回true继续执行
+            return true
+          }
+        },
+        //加速模式按钮
+        turboModeButton:{
+          show: true //是否显示
+        },
+        //教程按钮
+        helpButton:{
+          show: true, //是否显示
+          handleBefore:()=>{
+            //拦截点击事件，返回true继续执行
+            return true
+          }
+        },
+        //我的物品按钮
+        myStuff:{
+          show: true, //是否显示
+          url: '/myProject' //跳转的连接
+        },
+        //用户头像按钮
+        userAvatar:{
+          show: true, //是否显示
+          username: '未登录', //用户名
+          avatar:  window.location.protocol+"//"+window.location.host + '/static/avatar.png', //用户头像
+          handleClick(){
+            //点击头像，可以弹出登录框等操作
+          }
+        },
+        //自定义按钮
+        customButtons: [
+          {
+            show: true, //是否显示
+            buttonName: '保存到作品', //按钮名
+            style:{ //按钮样式
+              color: 'white',
+              background: 'hsla(215, 100%, 65%, 1)',
+            },
+            handleClick:()=>{ //按钮事件
+              console.log('保存到作品按钮点击');
+              
+              // 获取项目名
+              var projectName = window.scratch.getProjectName() || '未命名作品';
+              console.log('项目名:', projectName);
+              
+              // 获取项目文件
+              window.scratch.getProjectFile(async (file) => {
+                console.log('获取到项目文件，大小:', file.size);
+                
+                try {
+                  // 从URL参数中获取token和projectId
+                  const urlParams = new URLSearchParams(window.location.search);
+                  const token = urlParams.get('token');
+                  const projectId = urlParams.get('projectId');
+                  
+                  if (!token) {
+                    alert('请先登录');
+                    return;
+                  }
+                  
+                  // 创建FormData
+                  const formData = new FormData();
+                  formData.append('file', file, projectName + '.sb3');
+                  formData.append('title', projectName);
+                  if (projectId && projectId !== 'new') {
+                    formData.append('projectId', projectId);
+                  }
+                  
+                  // 使用相对路径或当前域名发送保存请求
+                  const apiUrl = window.location.protocol + '//' + window.location.host + '/api/scratch/projects/save';
+                  console.log('保存请求URL:', apiUrl);
+                  
+                  const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                      'Authorization': 'Bearer ' + token
+                    },
+                    body: formData
+                  });
+                  
+                  const result = await response.json();
+                  if (result.success) {
+                    alert('保存成功！');
+                    // 如果有新项目ID，更新URL参数
+                    if (result.data && result.data._id) {
+                      const newUrl = new URL(window.location.href);
+                      newUrl.searchParams.set('projectId', result.data._id);
+                      window.history.replaceState({}, '', newUrl.toString());
+                    }
+                  } else {
+                    alert('保存失败: ' + (result.message || '未知错误'));
+                  }
+                } catch (error) {
+                  console.error('保存失败:', error);
+                  alert('保存失败，请检查网络连接');
+                }
+              });
+            }
+          },
+          {
+            show: true, //是否显示
+            buttonName: '分享', //按钮名
+            style:{ //按钮样式
+              color: 'white',
+              background: 'hsla(30, 100%, 55%, 1)',
+            },
+            handleClick:()=>{ //按钮事件
+              console.log("自定义按钮1");
+              console.log('分享按钮')
+              window.scratch.getProjectCover(cover => {
+                //TODO 获取到作品截图
+              })
+              window.scratch.getProjectFile(file => {
+                //TODO 获取到项目文件
+              })
+              // 获取到项目名
+              var projectName = window.scratch.getProjectName()
+              console.log(projectName);
+            }
+          }
+          //可继续新增按钮
+        ]
+      }, 
+      blocks:{
+         // 积木缩放比例
+        scale: 0.8,
+        // 隐藏分类 费雷见README附录：
+        // 如需动态隐藏显示分类或积木，修改此配置后需手动执行 window.vm.emitWorkspaceUpdate()
+        hideCatagorys:[], 
+        //隐藏积木 积木代码见README附录：
+        hideBlocks:[],
+      },
+      stageArea:{ //舞台设置
+        fullscreenButton:{ //全屏按钮
+          show: true,
+          handleBeforeSetStageUnFull(){ //拦截退出全屏，返回true继续执行
+            return true
+          },
+          handleBeforeSetStageFull(){ //拦截全屏，返回true继续执行
+            return true
+          }
+        },
+        startButton:{ //开始按钮
+          show: true,
+          handleBeforeStart(){ //拦截开始按钮，返回true继续执行
+            return true
+          }
+        },
+        stopButton:{ // 停止按钮
+          show: true,
+          handleBeforeStop(){ //拦截停止按钮，，返回true继续执行
+            return true
+          }
+        }
+      },
+      //scratch vm初始化完毕
+      handleVmInitialized: (vm) => {
+        window.vm = vm
+      },
+      //作品加载完毕
+      handleProjectLoaded:() => {
+      },
+      //默认作品加载完毕
+      handleDefaultProjectLoaded:() => {
+        // 从URL参数中获取filename
+        const urlParams = new URLSearchParams(window.location.search);
+        const filename = urlParams.get('filename');
+        const token = urlParams.get('token');
+        const userId = urlParams.get('userId');
+        
+        if (filename && token) {
+          console.log('检测到filename参数，延迟1秒后加载项目:', filename);
+          console.log('userId参数:', userId);
+          
+          // 延迟1秒加载项目
+          setTimeout(async () => {
+            try {
+              // 构建项目文件下载URL
+              let projectUrl = `http://localhost:5000/api/scratch/projects/file/${encodeURIComponent(filename)}?token=${token}`;
+              // 如果提供了userId，添加到URL参数中
+              if (userId) {
+                projectUrl += `&userId=${userId}`;
+              }
+              console.log('加载项目URL:', projectUrl);
+              
+              window.scratch.loadProject(projectUrl, () => {
+                console.log('项目加载成功！');
+                // 从文件名中提取项目名并设置
+                const titleMatch = filename.match(/^\d+_\d+_(.+)\.sb3$/);
+                if (titleMatch) {
+                  const projectName = titleMatch[1].replace(/_/g, ' ');
+                  window.scratch.setProjectName(projectName);
+                }
+              });
+            } catch (error) {
+              console.error('加载项目失败:', error);
+            }
+          }, 1000);
+        }
+      },
+      //默认项目地址,不需要修请删除本配置项
+      defaultProjectURL:  window.location.protocol+"//"+window.location.host +  "/scratch3-master/static/project.sb3",
+      //素材库配置
+      assets:{
+        //素材库地址，指向scratch3-master/static/路径
+        assetHost: window.location.protocol+"//"+window.location.host + '/scratch3-master/static',
+        //素材库索引地址 - 从URL参数中读取自定义API
+        defaultIndex:{
+          sprites: (() => {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('spriteApi') || window.location.protocol+"//"+window.location.host +  "/static/json_index/sprites.json";
+          })(),
+          costumes:  window.location.protocol+"//"+window.location.host +  "/static/json_index/costumes.json",
+          backdrops: (() => {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('backdropApi') || window.location.protocol+"//"+window.location.host +  "/static/json_index/backdrops.json";
+          })(),
+          sounds: (() => {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('soundApi') || window.location.protocol+"//"+window.location.host +  "/static/json_index/sounds.json";
+          })()
+        },
+        //拦截角色库打开
+        handleBeforeSpriteLibraryOpen(){
+          console.log("角色库打开")
+          //追加素材库
+          // window.scratch.pushSpriteLibrary(Arrays)
+          return true;
+        },
+        //拦截造型库打开
+        handleBeforeCostumesLibraryOpen(){
+          return true;
+        },
+        //拦截背景库打开
+        handleBeforeBackdropsLibraryOpen(){
+          return true;
+        },
+        //拦截声音库打开
+        handleBeforeSoundLibraryOpen(){
+          return true;
+        }
+      },
+    }
+
+    //api
+    /**
+     * window.scratch.loadPorject(url, callback)
+     * window.scratch.getProjectFile(callback(file))
+     * window.scratch.getProjectCover(callback(file))
+     * window.scratch.getProjectName()
+     * window.scratch.setProjectName(projectName)
+     * window.scratch.setPlayerOnly(isPlayerOnly)
+     * window.scratch.setFullScreen(isFullScreen)
+     * 
+     * window.scratch.setEnableCouldData(isEnable) //设置是否开启云变量（会开启或关闭当前连接）
+     * window.scratch.setCloudId(id) //设置云变量ID（会触发一次重连）
+     * window.scratch.setAuthorUsername(authorUsername) //设置作者用户名
+     * window.vm.runtime.hasCloudData() //是否包含云变量
+     */
+
+  </script>
+</head>
+
+<body>
+  <div id="scratch">
+    <p>Loading……</p>
+  </div>
+<script type="text/javascript" src="lib.min.js"></script><script type="text/javascript" src="chunks/gui.js"></script></body>
+<script>
+
+</script>
+
+</html>
