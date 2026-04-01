@@ -38,7 +38,7 @@ const ScratchEditor: React.FC = () => {
         title: '新建Scratch项目',
         description: '通过Scratch 3.0编辑器创建的新项目',
         isPublic: false,
-        isFeatured: false
+        tags: []
       });
       
       // 获取用户token
